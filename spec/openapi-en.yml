@@ -1,0 +1,3149 @@
+# Gegenereerd door scripts/bouw-api-spec.py. Wijzig api-bron/, niet dit bestand.
+openapi: 3.1.0
+info:
+  title: Laposta API
+  version: '2'
+  description: 'The Laposta API follows REST. All responses, including errors, are JSON. Authenticate with basic auth: your API key is the username and the password stays empty.'
+servers:
+- url: https://api.laposta.nl/v2
+security:
+- apiKey: []
+tags:
+- name: Lists
+  description: A list holds the subscribers you send newsletters to. Use these endpoints to create lists, retrieve them and empty them.
+- name: Fields
+  description: Fields define which data you store per subscriber. Every list has an email field, plus the fields you add yourself.
+- name: Segments
+  description: A segment is a selection within a list, stored as a definition of blocks and rules.
+- name: Subscribers
+  description: 'Subscribers are the people in a list. This is the most used part of the API: adding, updating, unsubscribing and reading history.'
+- name: Webhooks
+  description: A webhook lets Laposta notify your own system as soon as something changes in a list.
+- name: Campaigns
+  description: 'Campaigns are the newsletters themselves: create, fill with html, test, schedule and send.'
+- name: Results
+  description: 'The results of a sent campaign: how many arrived, were opened and were clicked.'
+paths:
+  /list:
+    post:
+      operationId: lijstToevoegen
+      tags:
+      - Lists
+      summary: Adding a list
+      description: If there is something wrong with the parameters provided, a code is displayed with an error message. You may use these in combination with the variable 'parameter' to display a message to the user. See above under 'Error messages' what the codes stand for.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  examples:
+                  - Nieuwsbrief
+                  description: Name given to the list in question
+                locked:
+                  type: boolean
+                  examples:
+                  - 'false'
+                  description: If a list is locked, it cannot be changed by a user of the application. (true or false)
+                remarks:
+                  type: string
+                  examples:
+                  - Aangemaakt vanuit onze webshop.
+                  description: Potential remarks
+                subscribe_notification_email:
+                  type: string
+                  examples:
+                  - aanmeldingen@example.net
+                  description: Email address to which a notification will be sent upon a subscription
+                unsubscribe_notification_email:
+                  type: string
+                  examples:
+                  - afmeldingen@example.net
+                  description: Email address to which a notification will be sent upon the cancelling of a subscription
+              required:
+              - name
+      responses:
+        '201':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: alleLijstenOpvragen
+      tags:
+      - Lists
+      summary: Requesting all lists
+      description: All lists in an array of list objects. The list objects have been ordered in an array with the name 'data'. No parameters need to be provided.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListList'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /list/{list_id}:
+    get:
+      operationId: lijstOpvragen
+      tags:
+      - Lists
+      summary: Requesting a list
+      description: All information about a list.
+      parameters:
+      - name: list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: lijstWijzigen
+      tags:
+      - Lists
+      summary: Modifying lists
+      description: You will only have to include the fields that need to be modified in the application. Fields that are not mentioned will keep their current value. As soon as a field is mentioned, it is checked and may therefore cause an error message. A code is displayed with this error message. You may use this code in combination with the variable 'parameter' to display a message to the user. See above under 'Error messages' what the codes stand for.
+      parameters:
+      - name: list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  examples:
+                  - Nieuwsbrief
+                  description: A name for the list in question
+                locked:
+                  type: boolean
+                  examples:
+                  - 'false'
+                  description: If a list is locked, it cannot be changed by a user of the application. (true or false)
+                remarks:
+                  type: string
+                  examples:
+                  - Aangemaakt vanuit onze webshop.
+                  description: Potential remarks
+                subscribe_notification_email:
+                  type: string
+                  examples:
+                  - aanmeldingen@example.net
+                  description: Email address to which a notification will be sent upon a subscription
+                unsubscribe_notification_email:
+                  type: string
+                  examples:
+                  - afmeldingen@example.net
+                  description: Email address to which a notification will be sent upon the cancelling of a subscription
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: lijstVerwijderen
+      tags:
+      - Lists
+      summary: Deleting a list
+      description: This permanently deletes a list. If the list does not exist, an error message is displayed. In response you are shown another list object, but now with the state 'deleted'. After having finished this procedure, it is no longer possible for the user to request the list.
+      x-fern-explorer: false
+      parameters:
+      - name: list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /list/{list_id}/members:
+    delete:
+      operationId: lijstLeegmaken
+      tags:
+      - Lists
+      summary: Purging a list
+      description: This permanently purges all active subscribers from a list, but doesn't delete the list itself. If the list does not exist, an error message is displayed. In response, you are shown another list object.
+      x-fern-explorer: false
+      parameters:
+      - name: list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: lijstSynchroniserenBulk
+      tags:
+      - Lists
+      summary: Synchronizing a list (bulk)
+      description: 'Adds, updates or unsubscribes multiple subscribers in one request. This endpoint is off by default: an account without access gets a 401 with the message "Not permitted to issue bulk requests (1)". Contact Laposta to have it enabled for your account.'
+      x-fern-explorer: false
+      parameters:
+      - name: list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                actions:
+                  type: string
+                  examples:
+                  - string
+                  description: 'An array with at least one of the following options: add, update, or unsubscribe_excluded. These determine whether members may be added, updated and/or unsubscribed (read details below).'
+                mode (verouderd):
+                  type: string
+                  examples:
+                  - string
+                  description: For backwards compatibility you can still pass edit, add or add_and_edit, but this parameter is being phased out. Do not send mode together with actions.
+                members:
+                  type: object
+                  examples:
+                  - string
+                  description: An array with member objects. A minimum of 1, maximum of 500,000.
+                member_id:
+                  type: string
+                  examples:
+                  - ZKfjhLJHfl
+                  description: The id of the subscriber, or simply their email address. Both work.
+                email:
+                  type: string
+                  examples:
+                  - relatie@example.net
+                  description: The email address of the relation to be changed or added. If the member_id is also specified, then a new email address can be specified here for the existing relation.
+                custom_fields:
+                  type: object
+                  examples:
+                  - '{"voornaam":"Sanne","woonplaats":"Utrecht"}'
+                  description: A JSON object where the key is the name of the extra field and the value is the value of the extra field.
+                source_url:
+                  type: string
+                  examples:
+                  - https://example.net/aanmelden
+                  description: The URL from which the relation was registered.
+              required:
+              - actions
+              - members
+              - member_id
+              - email
+              - custom_fields
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncResult'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /field:
+    post:
+      operationId: veldToevoegen
+      tags:
+      - Fields
+      summary: Adding a field
+      description: If there is something wrong with the parameters provided, a code is displayed with an error message. See above under 'Error messages' what the codes stand for.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                list_id:
+                  type: string
+                  examples:
+                  - BaImMu3JZA
+                  description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+                name:
+                  type: string
+                  examples:
+                  - Nieuwsbrief
+                  description: A name for this field
+                defaultvalue:
+                  type: string
+                  examples:
+                  - ''
+                  description: A potential default value
+                datatype:
+                  type: string
+                  enum: &id001
+                  - text
+                  - numeric
+                  - date
+                  - select_single
+                  - select_multiple
+                  examples:
+                  - text
+                  description: 'The data type: text, numeric, date, select_single or select_multiple'
+                datatype_display:
+                  type: string
+                  enum: &id002
+                  - select
+                  - radio
+                  examples:
+                  - select
+                  description: 'Only applicable for select_single: the desired display (select, radio)'
+                options:
+                  type: array
+                  examples:
+                  - Rood
+                  description: What selection options are available? (mandatory for the data types select_single of select_multiple). The options can be given as an array. In the answer the options are repeated, but there is also an extra field options_full. Also listed are the option IDs, which may eventually be used to change the options later.
+                required:
+                  type: boolean
+                  examples:
+                  - 'false'
+                  description: Is this a mandatory field?
+                in_form:
+                  type: boolean
+                  examples:
+                  - 'true'
+                  description: Does this field occur in the subscription form? (boolean)
+                in_list:
+                  type: boolean
+                  examples:
+                  - 'true'
+                  description: Is this field visible in Laposta's overview? (boolean)
+              required:
+              - list_id
+              - name
+              - datatype
+              - required
+              - in_form
+              - in_list
+      responses:
+        '201':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: alleVeldenOpvragen
+      tags:
+      - Fields
+      summary: Get all fields
+      description: All fields of a list in an array of field objects. The field objects are formatted in an array named 'data'.
+      parameters:
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldList'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /field/{field_id}:
+    get:
+      operationId: veldOpvragen
+      tags:
+      - Fields
+      summary: Requesting a field
+      description: All information about a field.
+      parameters:
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      - name: field_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - Z87ysHha9A
+        description: The id of the field. You find it in the response of [Get all fields](/velden/alle-velden-opvragen).
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: veldWijzigen
+      tags:
+      - Fields
+      summary: Modifying fields
+      description: 'You will only have to include the parts that need to be modified. Parts that are not mentioned will keep their current values. As soon as a part is mentioned it does get checked, and thus can cause an error message. This error message contains a code with a message. See above under ''Error messages'' what these codes stand for. Pass options_full as a complete replacement for the option list. The key of each entry determines the operation: You may also pass options_full as an array of {"id", "value"} objects — the same shape as the response. The API will handle both formats.'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                list_id:
+                  type: string
+                  examples:
+                  - BaImMu3JZA
+                  description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+                name:
+                  type: string
+                  examples:
+                  - Nieuwsbrief
+                  description: A name for this field
+                datatype:
+                  type: string
+                  enum: *id001
+                  examples:
+                  - text
+                  description: The data type of this field (text, numeric, date, select_single, select_multiple)
+                datatype_display:
+                  type: string
+                  enum: *id002
+                  examples:
+                  - select
+                  description: 'Only applicable for select_single: the desired display (select, radio)'
+                options_full:
+                  type: array
+                  examples:
+                  - '{"1":"Rood","2":"Groen"}'
+                  description: 'The full set of options for a select_single or select_multiple field, as a key/value map of id → label. The key controls what happens to each option: Existing numeric ID (e.g. "2") — keeps or modifies the option. Changing the label updates it in-place; the ID stays the same, so existing member data is preserved. Non-numeric key (e.g. "new-0") — adds a new option; a fresh ID is assigned automatically. Omitting an existing ID — deletes that option. Always include every option you want to keep. Must be sent as JSON. Alternative format: instead of a key/value map you may also pass an array of objects in the same shape as the response: [{"id": "1", "value": "Red"}, {"id": "new-0", "value": "Orange"}]. The API will normalise this automatically.'
+                defaultvalue:
+                  type: string
+                  examples:
+                  - ''
+                  description: The default value (will be used in the absence of this field)
+                required:
+                  type: boolean
+                  examples:
+                  - 'false'
+                  description: Is this a mandatory field?
+                in_form:
+                  type: boolean
+                  examples:
+                  - 'true'
+                  description: Does this field occur in the subscription form? (boolean)
+                in_list:
+                  type: boolean
+                  examples:
+                  - 'true'
+                  description: Is this field visible in Laposta's overview? (boolean)
+              required:
+              - list_id
+              - required
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: veldVerwijderen
+      tags:
+      - Fields
+      summary: Deleting a field
+      description: This permanently deletes a field. If the field does not exist, an error message is displayed. In response you are shown another field object, but now with the state 'deleted'. After having finished this procedure, it is no longer possible for the user to request the field.
+      x-fern-explorer: false
+      parameters:
+      - name: field_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - Z87ysHha9A
+        description: The id of the field. You find it in the response of [Get all fields](/velden/alle-velden-opvragen).
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /segment:
+    post:
+      operationId: segmentToevoegen
+      tags:
+      - Segments
+      summary: Add segment
+      description: If there is something wrong with the provided parameters, an error code and message will be displayed. See above under Error Messages for what the codes mean.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                list_id:
+                  type: string
+                  examples:
+                  - BaImMu3JZA
+                  description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+                name:
+                  type: string
+                  examples:
+                  - Nieuwsbrief
+                  description: The name of the segment
+                definition:
+                  type: string
+                  examples:
+                  - '{"blocks":[{"rules":[{"input":{"subject":"woonplaats","comparator":"equal","multi":"","text":"Utrecht"},"type":"members"}]}]}'
+                  description: The segment definition as JSON text. Note that a field name that does not exist is accepted and produces a segment that matches nobody.
+              required:
+              - list_id
+              - name
+              - definition
+      responses:
+        '201':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SegmentEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: alleSegmentenOpvragen
+      tags:
+      - Segments
+      summary: Get all segments
+      description: All segments of a list in an array of segment objects. The segment objects are included in an array named 'data'.
+      parameters:
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SegmentList'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /segment/{segment_id}:
+    get:
+      operationId: segmentOpvragen
+      tags:
+      - Segments
+      summary: Retrieve segment
+      description: All information about a segment.
+      parameters:
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      - name: segment_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - pDrp5KOD0z
+        description: The id of the segment. You find it in the response of [Get all segments](/segmenten/alle-segmenten-opvragen).
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SegmentEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: segmentWijzigen
+      tags:
+      - Segments
+      summary: Modify segment
+      description: You only need to include the fields that need to be changed in the request. Fields that are not mentioned retain their current value. Once a field is mentioned, it is checked and can therefore cause an error message. This error message will include a code and a message. See above under Error Messages for what the codes mean.
+      parameters:
+      - name: segment_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - pDrp5KOD0z
+        description: The id of the segment. You find it in the response of [Get all segments](/segmenten/alle-segmenten-opvragen).
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                list_id:
+                  type: string
+                  examples:
+                  - BaImMu3JZA
+                  description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+                name:
+                  type: string
+                  examples:
+                  - Nieuwsbrief
+                  description: The name of the segment
+                definition:
+                  type: string
+                  examples:
+                  - '{"blocks":[{"rules":[{"input":{"subject":"woonplaats","comparator":"equal","multi":"","text":"Utrecht"},"type":"members"}]}]}'
+                  description: The definition of the segment (string in JSON format)
+              required:
+              - list_id
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SegmentEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: segmentVerwijderen
+      tags:
+      - Segments
+      summary: Delete segment
+      description: This permanently deletes a segment. After this, the segment cannot be retrieved again.
+      x-fern-explorer: false
+      parameters:
+      - name: segment_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - pDrp5KOD0z
+        description: The id of the segment. You find it in the response of [Get all segments](/segmenten/alle-segmenten-opvragen).
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SegmentEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /member:
+    post:
+      operationId: relatieToevoegen
+      tags:
+      - Subscribers
+      summary: Adding a subscriber
+      description: If there is something wrong with the parameters provided, a code is displayed with an error message. You can use this in combination with the variable 'parameter' to display a message to the user. See above under 'Error messages' what the codes stand for.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                list_id:
+                  type: string
+                  examples:
+                  - BaImMu3JZA
+                  description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+                ip:
+                  type: string
+                  examples:
+                  - 198.51.100.10
+                  description: The IP address the sign-up came from. For a form on your site that is the visitor address, not your server address.
+                email:
+                  type: string
+                  examples:
+                  - relatie@example.net
+                  description: The email address of the subscriber to be added
+                source_url:
+                  type: string
+                  examples:
+                  - https://example.net/aanmelden
+                  description: The URL from which the subscriber is registered
+                custom_fields:
+                  type: object
+                  examples:
+                  - '{"voornaam":"Sanne","woonplaats":"Utrecht"}'
+                  description: 'The values of the extra fields. The name (key) of the field is the ''custom_name'' (part of the Field object). This is the same as the ''Variable'' in the application. You pass labels as an array, with square brackets: custom_fields[labels][]=Klant. Without those brackets the call still succeeds but nothing changes, and a label that the list does not have returns error code 203.'
+                options:
+                  type: array
+                  examples:
+                  - Rood
+                  description: 'Additional instructions, with possibilities being: upsert: true to overwrite fields if the email address is already linked to an active contact in this list. Normally, you would receive an error if the email address is already linked to an active contact. Note: If a subscriber is unsubscribed and you perform an upsert with that email address, it will be set to active again. If you want to prevent an unsubscribed subscriber from being reactivated, you can use the suppress_reactivation option. suppress_reactivation: true to prevent an unsubscribed subscriber from being reactivated during an upsert suppress_email_notification: true to prevent a notification email from being sent every time someone logs in via an API ignore_doubleoptin: true to instantly activate subscribers on a double-optin list and ensure that no confirmation email is sent when signing up through the API.'
+              required:
+              - list_id
+              - ip
+              - email
+      responses:
+        '201':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: alleRelatiesOpvragen
+      tags:
+      - Subscribers
+      summary: Get all subscribers
+      description: All fields of a list in an array of member objects. The member objects are formatted in an array named 'data'.
+      parameters:
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      - name: state
+        in: query
+        required: false
+        schema:
+          type: string
+          enum: &id003
+          - active
+          - deleted
+          examples:
+          - active
+        description: 'The status of the requested subscribers: active, unsubscribed or cleaned'
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberList'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /member/{member_id}:
+    get:
+      operationId: relatieOpvragen
+      tags:
+      - Subscribers
+      summary: Requesting a subscriber
+      description: All information about a subscriber in a member object
+      parameters:
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      - name: member_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - ZKfjhLJHfl
+        description: The id of the subscriber, or simply their email address. Both work.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: relatieWijzigen
+      tags:
+      - Subscribers
+      summary: Modifying a subscriber
+      description: You only have to include the fields that need to be modified in the request. Fields that are not named will keep their current value. As soon as a field is mentioned it does get checked, and thus can cause an error message. This error message displays a code with a message. See above under 'Error messages' what the codes stand for.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                list_id:
+                  type: string
+                  examples:
+                  - BaImMu3JZA
+                  description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+                email:
+                  type: string
+                  examples:
+                  - relatie@example.net
+                  description: The email address of the subscriber that must be modified
+                state:
+                  type: string
+                  enum: *id003
+                  examples:
+                  - active
+                  description: 'The new status of the subscriber: active or unsubscribed'
+                custom_fields:
+                  type: object
+                  examples:
+                  - '{"voornaam":"Sanne","woonplaats":"Utrecht"}'
+                  description: 'The values of the extra created fields. You pass labels as an array, with square brackets: custom_fields[labels][]=Klant. Only labels the list already has are accepted; you create new labels in the application or during an import.'
+              required:
+              - list_id
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: relatieVerwijderen
+      tags:
+      - Subscribers
+      summary: Deleting a subscriber
+      description: This permanently deletes a subscriber. If the subscriber does not exist, an error message is displayed. In response you are shown another list object, but now with the state 'deleted'. After having finished this procedure, it is no longer possible for the user to request the subscriber.
+      x-fern-explorer: false
+      parameters:
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      - name: member_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - ZKfjhLJHfl
+        description: The id of the subscriber, or simply their email address. Both work.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /member/{member_id}/history:
+    get:
+      operationId: relatiegeschiedenisOpvragen
+      tags:
+      - Subscribers
+      summary: Subscriber history
+      description: The full event history of a subscriber, similar to the details shown in the application.
+      parameters:
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      - name: member_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - ZKfjhLJHfl
+        description: The id of the subscriber, or simply their email address. Both work.
+      - name: campaign_id
+        in: query
+        required: false
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      - name: event_date_from
+        in: query
+        required: false
+        schema:
+          type: string
+          examples:
+          - '2026-04-01 00:00:00'
+        description: Only return events from this date and time, inclusive. Use the regular format or ISO format described above.
+      - name: event_date_to
+        in: query
+        required: false
+        schema:
+          type: string
+          examples:
+          - '2026-05-01 00:00:00'
+        description: Only return events before this date and time, exclusive. Use the regular format or ISO format described above.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          examples:
+          - '100'
+        description: Maximum number of history items to return. Default is 100, maximum is 1000
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+          examples:
+          - opaque_cursor_value
+        description: Cursor from pagination.next_cursor to request the next page. Do not interpret this value yourself; send it back unchanged.
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          type: string
+          examples:
+          - event_date
+        description: Field to order by. Currently only event_date is supported
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+          enum: &id005
+          - desc
+          - asc
+          examples:
+          - desc
+        description: 'Sort direction: desc or asc. Default is desc'
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/History'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /webhook:
+    post:
+      operationId: webhookToevoegen
+      tags:
+      - Webhooks
+      summary: Adding a webhook
+      description: If there is something wrong with the parameters provided, a code is displayed with an error message. See above under 'Error messages' what the codes stand for.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                list_id:
+                  type: string
+                  examples:
+                  - BaImMu3JZA
+                  description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+                event:
+                  type: string
+                  enum: &id004
+                  - subscribed
+                  - modified
+                  - deactivated
+                  examples:
+                  - subscribed
+                  description: When will the webhook be requested? (subscribed, modified of deactivated)
+                url:
+                  type: string
+                  examples:
+                  - https://example.net/laposta-webhook
+                  description: The URL to be accessed
+                blocked:
+                  type: boolean
+                  examples:
+                  - 'false'
+                  description: Is the accessing of the webhook (temporarily) blocked? (true or false)
+              required:
+              - list_id
+              - event
+              - url
+              - blocked
+      responses:
+        '201':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: alleWebhooksOpvragen
+      tags:
+      - Webhooks
+      summary: Get all webhooks
+      description: All webhooks of a list in an array of member objects. The webhook objects are formatted in an array named 'data'.
+      parameters:
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookList'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /webhook/{webhook_id}:
+    get:
+      operationId: webhookOpvragen
+      tags:
+      - Webhooks
+      summary: Requesting a webhook
+      description: All information about a webhook
+      parameters:
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - k5RaJhbnLa
+        description: The id of the webhook. You find it in the response of [Get all webhooks](/webhooks/alle-webhooks-opvragen).
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: webhookWijzigen
+      tags:
+      - Webhooks
+      summary: Modifying a webhook
+      description: If there is something wrong with the parameters provided, a code is displayed with an error message. Fields that are not mentioned will keep their current value fields keep their current value. As soon as a field is mentioned it does get checked, and thus can cause an error message. This error message displays a code with a message. See above under 'Error messages' what the codes stand for. See above under 'Error messages' what the codes stand for.
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - k5RaJhbnLa
+        description: The id of the webhook. You find it in the response of [Get all webhooks](/webhooks/alle-webhooks-opvragen).
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                list_id:
+                  type: string
+                  examples:
+                  - BaImMu3JZA
+                  description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+                event:
+                  type: string
+                  enum: *id004
+                  examples:
+                  - subscribed
+                  description: When will the webhook be requested? (subscribed, modified or deactivated)
+                url:
+                  type: string
+                  examples:
+                  - https://example.net/laposta-webhook
+                  description: The URL to be accessed
+                blocked:
+                  type: boolean
+                  examples:
+                  - 'false'
+                  description: Is the accessing of the webhook (temporarily) blocked? (true or false)
+              required:
+              - list_id
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: webhookVerwijderen
+      tags:
+      - Webhooks
+      summary: Deleting a webhook
+      description: This permanently deletes a webhook. Potentially outstanding requests from the webhook will still be completed. If the field does not exist, an error message is displayed. In response you are shown another webhook object, but now with the state 'deleted'. After having finished this procedure, it is no longer possible for the user to request the webhook.
+      x-fern-explorer: false
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - k5RaJhbnLa
+        description: The id of the webhook. You find it in the response of [Get all webhooks](/webhooks/alle-webhooks-opvragen).
+      - name: list_id
+        in: query
+        required: true
+        schema:
+          type: string
+          examples:
+          - BaImMu3JZA
+        description: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /campaign:
+    post:
+      operationId: campagneAanmaken
+      tags:
+      - Campaigns
+      summary: Creating a campaign
+      description: Creates a campaign. A campaign you create through the API can be filled with `/content` afterwards; campaigns built in the drag-and-drop editor cannot.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  examples:
+                  - regular
+                  description: 'Type of campaign (must be set to: regular)'
+                name:
+                  type: string
+                  examples:
+                  - Nieuwsbrief
+                  description: A name for this campaign for internal use
+                subject:
+                  type: string
+                  examples:
+                  - De nieuwsbrief van maart
+                  description: Subject line
+                from[name]:
+                  type: string
+                  examples:
+                  - Voorbeeld BV
+                  description: The name of the sender
+                from[email]:
+                  type: string
+                  examples:
+                  - nieuwsbrief@example.net
+                  description: The email address of the sender (must be a sender address approved within the program)
+                reply_to:
+                  type: string
+                  examples:
+                  - info@example.net
+                  description: Email address for receiving replies
+                list_ids:
+                  type: object
+                  examples:
+                  - string
+                  description: Recipients, array of list_ids and segment_ids if needed
+                stats[ga]:
+                  type: string
+                  examples:
+                  - 'false'
+                  description: Link Google Analytics (true or false)
+                stats[mtrack]:
+                  type: string
+                  examples:
+                  - 'false'
+                  description: Link Mtrack (true or false)
+              required:
+              - type
+              - name
+              - subject
+              - from[name]
+              - from[email]
+              - list_ids
+      responses:
+        '201':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: alleCampagnesOpvragen
+      tags:
+      - Campaigns
+      summary: Get all campaigns
+      description: All campaigns in an array of campaign objects. The campaign objects have been ordered in an array with the name 'data'.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignList'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /campaign/{campaign_id}:
+    get:
+      operationId: campagneOpvragen
+      tags:
+      - Campaigns
+      summary: Requesting a campaign
+      description: All information about a campaign
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: campagneWijzigen
+      tags:
+      - Campaigns
+      summary: Modifying a campaign
+      description: You only have to submit the fields that require to be modified in the application. Fields that are not mentioned will keep their current value fields keep their current value. As soon as a field is mentioned it does get checked, and thus can cause an error message. This error message displays a code with a message. See above under 'Error messages' what the codes stand for.
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  examples:
+                  - Nieuwsbrief
+                  description: A name for this campaign for internal use
+                subject:
+                  type: string
+                  examples:
+                  - De nieuwsbrief van maart
+                  description: Subject line
+                from[name]:
+                  type: string
+                  examples:
+                  - Voorbeeld BV
+                  description: The name of the sender
+                from[email]:
+                  type: string
+                  examples:
+                  - nieuwsbrief@example.net
+                  description: The email address of the sender (must be a sender address approved within the program)
+                reply_to:
+                  type: string
+                  examples:
+                  - info@example.net
+                  description: Email address for receiving replies
+                list_ids:
+                  type: object
+                  examples:
+                  - string
+                  description: Recipients, array of list_ids and segment_ids if needed
+                stats[ga]:
+                  type: string
+                  examples:
+                  - 'false'
+                  description: Link Google Analytics (true or false)
+                stats[mtrack]:
+                  type: string
+                  examples:
+                  - 'false'
+                  description: Link Mtrack (true or false)
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: campagneVerwijderen
+      tags:
+      - Campaigns
+      summary: Deleting a campaign
+      description: This deletes a campaign. Unsent campaigns will be permanently deleted. Campaigns that have been sent are permanently deleted only after 180 days. In the meantime, they can be restored in the overview of campaigns in our program. In response you are shown another campaign object, but now with the state 'deleted'. After having finished this procedure, it is no longer possible for the user to request the campaign.
+      x-fern-explorer: false
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /campaign/{campaign_id}/content:
+    get:
+      operationId: campagneContentOpvragen
+      tags:
+      - Campaigns
+      summary: Requesting campaign content
+      description: Requesting the content of a campaign. Please note that this is only possible if it involves a campaign that has been exported, and not for a campaign created within the application using the drag & drop editor.
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignContent'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: campagneContentVullen
+      tags:
+      - Campaigns
+      summary: Filling campaign content
+      description: 'Filling in the content of a campaign The campaign can either be filled directly with html, or through a URL, in which case Laposta imports the html found at the specified URL. One of the two must be chosen. If both parameters are given the html is taken. If the import fails, a 400 error message from the API will occur. If it does succeed in importing the html, but problems were found during the import, they are shown in the variable report in the response. These may include: Solving these problems is not necessary in order to properly send the newsletter, but it is highly recommended. In the case of a free account, our advertising is added to the bottom of the newsletter. If the offered html does not contain an unsubscribe link, it will simply be added by our program.'
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                html:
+                  type: string
+                  examples:
+                  - <html><body><p>Hallo {{voornaam}}</p></body></html>
+                  description: The html for the campaign
+                import_url:
+                  type: string
+                  examples:
+                  - https://example.net/nieuwsbrief.html
+                  description: The URL from which the html must be imported
+                inline_css:
+                  type: boolean
+                  examples:
+                  - 'true'
+                  description: Potential inlining of css (true or false)
+                javascript:
+                  type: string
+                  examples:
+                  - string
+                  description: JavaScript was encountered
+                flash:
+                  type: string
+                  examples:
+                  - string
+                  description: Flash was encountered
+                no_unsubscribe:
+                  type: string
+                  examples:
+                  - string
+                  description: No unsubscribe could be located
+                empty_unsubscribe:
+                  type: string
+                  examples:
+                  - string
+                  description: Empty unsubscribe encountered
+                css:
+                  type: string
+                  examples:
+                  - string
+                  description: Missing external css files (listed)
+                images:
+                  type: string
+                  examples:
+                  - string
+                  description: Missing external images (listed)
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignContent'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /campaign/{campaign_id}/action/testmail:
+    post:
+      operationId: campagneTesten
+      tags:
+      - Campaigns
+      summary: Testing a campaign
+      description: 'Sending a test mail Note: only in the case of a campaign for which there already is content, but which has not yet been sent, is it possible for a test email to be sent.'
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  examples:
+                  - relatie@example.net
+                  description: The email address to which the test should be sent.
+              required:
+              - email
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /campaign/{campaign_id}/action/schedule:
+    post:
+      operationId: campagneInplannen
+      tags:
+      - Campaigns
+      summary: Planning a campaign
+      description: Schedules the campaign for a moment in the future. You cancel a scheduled campaign by deleting it.
+      x-fern-explorer: false
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                delivery_requested:
+                  type: string
+                  examples:
+                  - '2026-05-18 14:30:00'
+                  description: The time and date of sending. Use the regular format or ISO format described above.
+              required:
+              - delivery_requested
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /campaign/{campaign_id}/action/send:
+    post:
+      operationId: campagneVerzenden
+      tags:
+      - Campaigns
+      summary: Sending a campaign
+      description: 'Sends the campaign to all connected lists and segments right away. This call cannot be undone, and it is not blocked when the campaign was already sent: a second call starts delivery again.'
+      x-fern-explorer: false
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /campaign/{campaign_id}/history:
+    get:
+      operationId: campagnegeschiedenisOpvragen
+      tags:
+      - Campaigns
+      summary: Requesting campaign history
+      description: The full event history of a campaign. A campaign can contain many events; use pagination to retrieve additional pages.
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      - name: event_date_from
+        in: query
+        required: false
+        schema:
+          type: string
+          examples:
+          - '2026-04-01 00:00:00'
+        description: Only return events from this date and time, inclusive. Use the regular format or ISO format described above.
+      - name: event_date_to
+        in: query
+        required: false
+        schema:
+          type: string
+          examples:
+          - '2026-05-01 00:00:00'
+        description: Only return events before this date and time, exclusive. Use the regular format or ISO format described above.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          examples:
+          - '100'
+        description: Maximum number of history items to return. Default is 100, maximum is 1000
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+          examples:
+          - opaque_cursor_value
+        description: Cursor from pagination.next_cursor to request the next page. Do not interpret this value yourself; send it back unchanged.
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          type: string
+          examples:
+          - event_date
+        description: Field to order by. Currently only event_date is supported
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+          enum: *id005
+          examples:
+          - desc
+        description: 'Sort direction: desc or asc. Default is desc'
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/History'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /report/{campaign_id}:
+    get:
+      operationId: campagneresultatenOpvragen
+      tags:
+      - Results
+      summary: Campaign results
+      description: The results of a campaign.
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          examples:
+          - njhgaf61ye
+        description: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportEnvelope'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /report:
+    get:
+      operationId: alleResultatenOpvragen
+      tags:
+      - Results
+      summary: Get all results
+      description: The results of all campaigns in an array of list objects. The report objects have been ordered in an array with the name 'data'.
+      responses:
+        '200':
+          description: The request succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportList'
+        '400':
+          description: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No valid API key was provided, or this endpoint is not enabled for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: basic
+      x-fern-basic:
+        username:
+          name: api_key
+        password:
+          name: leave_empty
+          omit: true
+      description: Enter your API key at `api_key` and leave `leave_empty` empty. The API uses basic auth, with your key in place of the username. In curl that reads `-u YOUR_KEY:`, with a colon and nothing after it.
+  schemas:
+    List:
+      type: object
+      description: The list object
+      properties:
+        list_id:
+          type: string
+          description: ID of the list in question
+          examples:
+          - BaImMu3JZA
+        timezone:
+          type: string
+          description: The account timezone used for datetime fields
+          examples:
+          - Europe/Amsterdam
+        created:
+          type: string
+          description: Date and time of creation
+        created_iso:
+          type:
+          - string
+          - 'null'
+          description: Date and time of creation in ISO format
+        modified:
+          type:
+          - string
+          - 'null'
+          description: Date and time of last modification made
+        modified_iso:
+          type:
+          - string
+          - 'null'
+          description: Date and time of last modification in ISO format
+        state:
+          type: string
+          description: 'Status of the list: active or deleted'
+          enum: *id003
+        name:
+          type: string
+          description: Name given to the list in question
+          examples:
+          - Nieuwsbrief
+        locked:
+          type: boolean
+          description: If a list is locked, it cannot be changed by a user of the application. (true or false)
+        remarks:
+          type: string
+          description: Potential remarks
+        subscribe_notification_email:
+          type: string
+          description: Email address to which a notification will be sent upon a subscription
+        unsubscribe_notification_email:
+          type: string
+          description: Email address to which a notification will be sent upon the cancelling of a subscription
+        members:
+          type: object
+          description: Information in regards to the number of active, unsubscribed and cleaned (deleted) members
+        account_id:
+          type: string
+          description: The id of the account this list belongs to.
+          examples:
+          - wFiUS4HL4e
+    ListEnvelope:
+      type: object
+      properties:
+        list:
+          $ref: '#/components/schemas/List'
+    ListList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListEnvelope'
+    Field:
+      type: object
+      description: The field object
+      properties:
+        field_id:
+          type: string
+          description: The ID of the field in question
+          examples:
+          - Z87ysHha9A
+        list_id:
+          type: string
+          description: The ID of the list to which the field belongs
+          examples:
+          - BaImMu3JZA
+        timezone:
+          type: string
+          description: The account timezone used for datetime fields
+          examples:
+          - Europe/Amsterdam
+        created:
+          type: string
+          description: Date and time of creation
+        created_iso:
+          type:
+          - string
+          - 'null'
+          description: Date and time of creation in ISO format
+        modified:
+          type:
+          - string
+          - 'null'
+          description: Always null. Field modification times are not stored and this field is kept for backwards compatibility.
+        state:
+          type: string
+          description: 'The status of the field in question: either active or deleted'
+          enum: *id003
+        name:
+          type: string
+          description: Name of the field (for displaying purposes)
+          examples:
+          - Nieuwsbrief
+        tag:
+          type: string
+          description: The subscriber variable for usage in campaigns (not modifyable)
+        custom_name:
+          type: string
+          description: Name of the field (for use in member API calls)
+        defaultvalue:
+          type: string
+          description: The default value (will be used in the absence of this field)
+        datatype:
+          type: string
+          description: The data type of the field in question (text, numeric, date, select_single, select_multiple or labels). The labels type belongs to the Labels field, which comes into being by itself as soon as your list has at least one label; you do not create that field yourself.
+          enum:
+          - text
+          - numeric
+          - date
+          - select_single
+          - select_multiple
+          - labels
+        datatype_display:
+          type: string
+          description: 'Only applicable for select_single: the desired display (select, radio)'
+          enum: *id002
+        options:
+          type: array
+          items:
+            type: string
+          description: An array of the available options (for select_single, select_multiple or labels). For a labels field, these are the labels of this list.
+        options_full:
+          type: array
+          items:
+            type: string
+          description: An array of the available options, including IDs (for select_single, select_multiple or labels).
+        required:
+          type: boolean
+          description: Is this a mandatory field? (true or false)
+        in_form:
+          type: boolean
+          description: Does this field occur in the subscription form? (true or false)
+        in_list:
+          type: boolean
+          description: Does this field occur while browsing the list? (true or false)
+        autocomplete:
+          type: string
+          description: The value for the html autocomplete attribute (string)
+        pos:
+          type: string
+          description: The position of this field in the list, as a string containing a number.
+        is_email:
+          type: boolean
+          description: Whether this is the email field of the list.
+    FieldEnvelope:
+      type: object
+      properties:
+        field:
+          $ref: '#/components/schemas/Field'
+    FieldList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldEnvelope'
+    Segment:
+      type: object
+      description: The segment object
+      properties:
+        segment_id:
+          type: string
+          description: The ID of this segment
+          examples:
+          - pDrp5KOD0z
+        list_id:
+          type: string
+          description: The ID of the list to which the segment belongs
+          examples:
+          - BaImMu3JZA
+        timezone:
+          type: string
+          description: The account timezone used for datetime fields
+          examples:
+          - Europe/Amsterdam
+        name:
+          type: string
+          description: The name of the segment
+          examples:
+          - Nieuwsbrief
+        definition:
+          type: string
+          description: The definition of the segment (string in JSON format)
+        created:
+          type: string
+          description: Time of creation
+        created_iso:
+          type:
+          - string
+          - 'null'
+          description: Time of creation in ISO format
+        modified:
+          type:
+          - string
+          - 'null'
+          description: Time of last modification
+        modified_iso:
+          type:
+          - string
+          - 'null'
+          description: Time of last modification in ISO format
+        state:
+          type: string
+          description: 'The state of this segment: active or deleted.'
+          enum: *id003
+    SegmentEnvelope:
+      type: object
+      properties:
+        segment:
+          $ref: '#/components/schemas/Segment'
+    SegmentList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SegmentEnvelope'
+    Member:
+      type: object
+      description: The member object
+      properties:
+        member_id:
+          type: string
+          description: The ID of this member object
+          examples:
+          - ZKfjhLJHfl
+        list_id:
+          type: string
+          description: The ID of the related list
+          examples:
+          - BaImMu3JZA
+        email:
+          type: string
+          description: The email address
+          examples:
+          - relatie@example.net
+        state:
+          type: string
+          description: 'The current status of this subscriber: active, unsubscribed, unconfirmed or cleaned'
+          enum: *id003
+        timezone:
+          type: string
+          description: The account timezone used for datetime fields
+          examples:
+          - Europe/Amsterdam
+        signup_date:
+          type: string
+          description: Date and time of subscription
+        signup_date_iso:
+          type:
+          - string
+          - 'null'
+          description: Date and time of subscription in ISO format
+        modified:
+          type:
+          - string
+          - 'null'
+          description: Date and time of last modification made
+        modified_iso:
+          type:
+          - string
+          - 'null'
+          description: Date and time of last modification in ISO format
+        confirm_date:
+          type:
+          - string
+          - 'null'
+          description: Date and time of confirmation
+        confirm_date_iso:
+          type:
+          - string
+          - 'null'
+          description: Date and time of confirmation in ISO format
+        ip:
+          type: string
+          description: IP from which the subscriber is registered
+        source_url:
+          type: string
+          description: URL from which the subscriber is registered
+        custom_fields:
+          type: object
+          description: An array with the value of all additional fields of the corresponding list. If there are fields where several options can be selected, these options are listed in an array. If the list has labels, `labels` is included as well, with the labels of that subscriber as an array.
+    MemberEnvelope:
+      type: object
+      properties:
+        member:
+          $ref: '#/components/schemas/Member'
+    MemberList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberEnvelope'
+    Webhook:
+      type: object
+      description: The webhook object
+      properties:
+        webhook_id:
+          type: string
+          description: The ID of this webhook
+          examples:
+          - k5RaJhbnLa
+        list_id:
+          type: string
+          description: The ID of the list to which the field belongs
+          examples:
+          - BaImMu3JZA
+        timezone:
+          type: string
+          description: The account timezone used for datetime fields
+          examples:
+          - Europe/Amsterdam
+        created:
+          type: string
+          description: Date and time of creation
+        created_iso:
+          type:
+          - string
+          - 'null'
+          description: Date and time of creation in ISO format
+        modified:
+          type:
+          - string
+          - 'null'
+          description: Date and time of last modification made
+        modified_iso:
+          type:
+          - string
+          - 'null'
+          description: Date and time of last modification in ISO format
+        state:
+          type: string
+          description: 'The status of this webhook: active or deleted'
+          enum: *id003
+        event:
+          type: string
+          description: When will the webhook be requested? (subscribed, modified or deactivated)
+          enum: *id004
+        url:
+          type: string
+          description: The URL to be accessed
+        blocked:
+          type: boolean
+          description: Is the accessing of the webhook (temporarily) blocked? (true or false)
+        secret:
+          type: string
+          description: The webhook's signing secret, used to verify that incoming requests are from Laposta (see 'Webhook security' above)
+    WebhookEnvelope:
+      type: object
+      properties:
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+    WebhookList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEnvelope'
+    Campaign:
+      type: object
+      description: The campaign object
+      properties:
+        account_id:
+          type: string
+          description: The ID of this account
+          examples:
+          - wFiUS4HL4e
+        campaign_id:
+          type: string
+          description: The ID of this campaign
+          examples:
+          - njhgaf61ye
+        timezone:
+          type: string
+          description: The account timezone used for datetime fields
+          examples:
+          - Europe/Amsterdam
+        created:
+          type: string
+          description: Date and time of creation
+        created_iso:
+          type:
+          - string
+          - 'null'
+          description: Date and time of creation in ISO format
+        modified:
+          type:
+          - string
+          - 'null'
+          description: Date and time of last modification made
+        modified_iso:
+          type:
+          - string
+          - 'null'
+          description: Date and time of last modification in ISO format
+        type:
+          type: string
+          description: 'The type of campaign (currently only possible: regular)'
+        delivery_requested:
+          type:
+          - string
+          - 'null'
+          description: When to send
+        delivery_requested_iso:
+          type:
+          - string
+          - 'null'
+          description: When to send in ISO format
+        delivery_started:
+          type:
+          - string
+          - 'null'
+          description: Start of last transmission
+        delivery_started_iso:
+          type:
+          - string
+          - 'null'
+          description: Start of last transmission in ISO format
+        delivery_ended:
+          type:
+          - string
+          - 'null'
+          description: End of last transmission
+        delivery_ended_iso:
+          type:
+          - string
+          - 'null'
+          description: End of last transmission in ISO format
+        name:
+          type: string
+          description: Internal name of campaign
+          examples:
+          - Nieuwsbrief
+        subject:
+          type: string
+          description: Subject line
+        from:
+          type: object
+          description: Sender (name en email address)
+        reply_to:
+          type: string
+          description: Email address for receiving replies
+        list_ids:
+          type: object
+          description: Linked lists and segments
+        stats:
+          type: object
+          description: Linked web statistics
+        web:
+          type: string
+          description: URL to web version
+        screenshot:
+          type: object
+          description: Screenshots of campaign
+        previewtext:
+          type: string
+          description: The preheader shown after the subject line in the inbox.
+    CampaignEnvelope:
+      type: object
+      properties:
+        campaign:
+          $ref: '#/components/schemas/Campaign'
+    CampaignList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CampaignEnvelope'
+    Report:
+      type: object
+      description: The report object
+      properties:
+        account_id:
+          type: string
+          description: The ID of this account
+          examples:
+          - wFiUS4HL4e
+        campaign_id:
+          type: string
+          description: The ID of the campaign
+          examples:
+          - njhgaf61ye
+        sent:
+          type: integer
+          description: The number of emails sent
+        accepted:
+          type: integer
+          description: The number of emails accepted by the recipient mail servers
+        cleaned:
+          type: integer
+          description: The number of deleted subscribers
+        complained:
+          type: integer
+          description: The number of spam complaints (by clicking on the spam button in the email program)
+        hardbounced:
+          type: integer
+          description: The number of hard-bounces
+        unsubscribed:
+          type: integer
+          description: The number of unsubscriptions
+        opened_unique:
+          type: integer
+          description: The number of subscribers who have opened the email once or more
+        clicked_unique:
+          type: integer
+          description: The number of subscribers who have clicked on the email once or more
+        webversion_unique:
+          type: integer
+          description: The number of subscribers who have requested the web version
+        accepted_ratio:
+          type: number
+          description: The ratio of accepted emails to the number of sent emails
+        opened_ratio:
+          type: number
+          description: The ratio of emails opened once or more to the number of accepted emails
+        clicked_ratio:
+          type: number
+          description: The ratio of emails that have been clicked once or more to the number of accepted emails
+        from_automation:
+          type: boolean
+          description: Whether this delivery came from an automation.
+    ReportEnvelope:
+      type: object
+      properties:
+        report:
+          $ref: '#/components/schemas/Report'
+    ReportList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportEnvelope'
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+              - invalid_request
+              - invalid_input
+              - internal
+            message:
+              type: string
+              examples:
+              - Unknown list
+            code:
+              type: integer
+              examples:
+              - 203
+            parameter:
+              type: string
+              examples:
+              - list_id
+          required:
+          - type
+          - message
+      description: Every error has the same shape.
+    History:
+      type: object
+      properties:
+        pagination:
+          type: object
+          properties:
+            limit:
+              type: integer
+              examples:
+              - 100
+            has_more:
+              type: boolean
+            next_cursor:
+              type:
+              - string
+              - 'null'
+        order:
+          type: object
+          properties:
+            order_by:
+              type: string
+              examples:
+              - event_date
+            order:
+              type: string
+              enum:
+              - desc
+              - asc
+        filters:
+          type: object
+          properties:
+            timezone:
+              type: string
+              examples:
+              - Europe/Amsterdam
+            campaign_id:
+              type:
+              - string
+              - 'null'
+            event_date_from:
+              type:
+              - string
+              - 'null'
+            event_date_from_iso:
+              type:
+              - string
+              - 'null'
+            event_date_to:
+              type:
+              - string
+              - 'null'
+            event_date_to_iso:
+              type:
+              - string
+              - 'null'
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              event:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    examples:
+                    - unsubscribed
+                  timezone:
+                    type: string
+                  event_date:
+                    type: string
+                    examples:
+                    - '2026-05-18 14:30:00'
+                  event_date_iso:
+                    type: string
+                    examples:
+                    - '2026-05-18T14:30:00+02:00'
+                  campaign:
+                    type:
+                    - object
+                    - 'null'
+                  details:
+                    type: object
+      description: A page of events, together with the pagination, sorting and filters that were applied.
+    SyncResult:
+      type: object
+      properties:
+        report:
+          type: object
+          properties:
+            added:
+              type: integer
+            edited:
+              type: integer
+            skipped:
+              type: integer
+            errors:
+              type: integer
+        added:
+          type: array
+          items:
+            type: object
+        edited:
+          type: array
+          items:
+            type: object
+        skipped:
+          type: array
+          items:
+            type: object
+        errors:
+          type: array
+          items:
+            type: object
+      description: The result of a synchronisation, split into added, edited, skipped and failed.
+    CampaignContent:
+      type: object
+      properties:
+        campaign:
+          type: object
+          properties:
+            account_id:
+              type: string
+            campaign_id:
+              type: string
+            html:
+              type: string
+            plaintext:
+              type: string
+            report:
+              type: object
+              description: Alleen bij het vullen van content, en alleen als er iets op te merken viel.
+              properties:
+                javascript:
+                  type: boolean
+                flash:
+                  type: boolean
+                no_unsubscribe:
+                  type: boolean
+                empty_unsubscribe:
+                  type: boolean
+                css:
+                  type: array
+                  items:
+                    type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+      description: The content of a campaign in html and in plain text.

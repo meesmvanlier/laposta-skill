@@ -1,0 +1,12 @@
+{
+  "name": "laposta",
+  "description": "Work with Laposta, the Dutch email marketing platform, through its REST API: lists, subscribers, custom fields, segments, campaigns, results and webhooks.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Mees van Lier"
+  },
+  "homepage": "https://github.com/meesmvanlier/laposta-skill",
+  "repository": "https://github.com/meesmvanlier/laposta-skill",
+  "license": "MIT",
+  "keywords": ["laposta", "email-marketing", "api", "skill"]
+}

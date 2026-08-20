@@ -1,0 +1,149 @@
+# Schemas die niet een op een uit een objecttabel van de oude docs komen.
+# Alle vormen hieronder zijn afgelezen uit echte antwoorden van de API (fase 1).
+Error:
+  type: object
+  properties:
+    error:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [invalid_request, invalid_input, internal]
+        message:
+          type: string
+          examples: ["Unknown list"]
+        code:
+          type: integer
+          examples: [203]
+        parameter:
+          type: string
+          examples: ["list_id"]
+      required: [type, message]
+
+History:
+  type: object
+  properties:
+    pagination:
+      type: object
+      properties:
+        limit:
+          type: integer
+          examples: [100]
+        has_more:
+          type: boolean
+        next_cursor:
+          type: [string, "null"]
+    order:
+      type: object
+      properties:
+        order_by:
+          type: string
+          examples: ["event_date"]
+        order:
+          type: string
+          enum: [desc, asc]
+    filters:
+      type: object
+      properties:
+        timezone:
+          type: string
+          examples: ["Europe/Amsterdam"]
+        campaign_id:
+          type: [string, "null"]
+        event_date_from:
+          type: [string, "null"]
+        event_date_from_iso:
+          type: [string, "null"]
+        event_date_to:
+          type: [string, "null"]
+        event_date_to_iso:
+          type: [string, "null"]
+    data:
+      type: array
+      items:
+        type: object
+        properties:
+          event:
+            type: object
+            properties:
+              type:
+                type: string
+                examples: ["unsubscribed"]
+              timezone:
+                type: string
+              event_date:
+                type: string
+                examples: ["2026-05-18 14:30:00"]
+              event_date_iso:
+                type: string
+                examples: ["2026-05-18T14:30:00+02:00"]
+              campaign:
+                type: [object, "null"]
+              details:
+                type: object
+
+SyncResult:
+  type: object
+  properties:
+    report:
+      type: object
+      properties:
+        added:
+          type: integer
+        edited:
+          type: integer
+        skipped:
+          type: integer
+        errors:
+          type: integer
+    added:
+      type: array
+      items:
+        type: object
+    edited:
+      type: array
+      items:
+        type: object
+    skipped:
+      type: array
+      items:
+        type: object
+    errors:
+      type: array
+      items:
+        type: object
+
+CampaignContent:
+  type: object
+  properties:
+    campaign:
+      type: object
+      properties:
+        account_id:
+          type: string
+        campaign_id:
+          type: string
+        html:
+          type: string
+        plaintext:
+          type: string
+        report:
+          type: object
+          description: Alleen bij het vullen van content, en alleen als er iets op te merken viel.
+          properties:
+            javascript:
+              type: boolean
+            flash:
+              type: boolean
+            no_unsubscribe:
+              type: boolean
+            empty_unsubscribe:
+              type: boolean
+            css:
+              type: array
+              items:
+                type: string
+            images:
+              type: array
+              items:
+                type: string

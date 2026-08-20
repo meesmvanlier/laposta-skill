@@ -1,0 +1,366 @@
+antwoord.standaard: The request succeeded.
+auth.beschrijving: Enter your API key at `api_key` and leave `leave_empty` empty. The API uses basic auth, with your key in place of the username. In curl that reads `-u YOUR_KEY:`, with a colon and nothing after it.
+endpoint.alleCampagnesOpvragen.description: All campaigns in an array of campaign objects. The campaign objects have been ordered in an array with the name 'data'.
+endpoint.alleCampagnesOpvragen.summary: Get all campaigns
+endpoint.alleLijstenOpvragen.description: All lists in an array of list objects. The list objects have been ordered in an array with the name 'data'. No parameters need to be provided.
+endpoint.alleLijstenOpvragen.summary: Requesting all lists
+endpoint.alleRelatiesOpvragen.description: All fields of a list in an array of member objects. The member objects are formatted in an array named 'data'.
+endpoint.alleRelatiesOpvragen.summary: Get all subscribers
+endpoint.alleResultatenOpvragen.description: The results of all campaigns in an array of list objects. The report objects have been ordered in an array with the name 'data'.
+endpoint.alleResultatenOpvragen.summary: Get all results
+endpoint.alleSegmentenOpvragen.description: All segments of a list in an array of segment objects. The segment objects are included in an array named 'data'.
+endpoint.alleSegmentenOpvragen.summary: Get all segments
+endpoint.alleVeldenOpvragen.description: All fields of a list in an array of field objects. The field objects are formatted in an array named 'data'.
+endpoint.alleVeldenOpvragen.summary: Get all fields
+endpoint.alleWebhooksOpvragen.description: All webhooks of a list in an array of member objects. The webhook objects are formatted in an array named 'data'.
+endpoint.alleWebhooksOpvragen.summary: Get all webhooks
+endpoint.campagneAanmaken.description: Creates a campaign. A campaign you create through the API can be filled with `/content` afterwards; campaigns built in the drag-and-drop editor cannot.
+endpoint.campagneAanmaken.summary: Creating a campaign
+endpoint.campagneContentOpvragen.description: Requesting the content of a campaign. Please note that this is only possible if it involves a campaign that has been exported, and not for a campaign created within the application using the drag & drop editor.
+endpoint.campagneContentOpvragen.summary: Requesting campaign content
+endpoint.campagneContentVullen.description: 'Filling in the content of a campaign The campaign can either be filled directly with html, or through a URL, in which case Laposta imports the html found at the specified URL. One of the two must be chosen. If both parameters are given the html is taken. If the import fails, a 400 error message from the API will occur. If it does succeed in importing the html, but problems were found during the import, they are shown in the variable report in the response. These may include: Solving these problems is not necessary in order to properly send the newsletter, but it is highly recommended. In the case of a free account, our advertising is added to the bottom of the newsletter. If the offered html does not contain an unsubscribe link, it will simply be added by our program.'
+endpoint.campagneContentVullen.summary: Filling campaign content
+endpoint.campagneInplannen.description: Schedules the campaign for a moment in the future. You cancel a scheduled campaign by deleting it.
+endpoint.campagneInplannen.summary: Planning a campaign
+endpoint.campagneOpvragen.description: All information about a campaign
+endpoint.campagneOpvragen.summary: Requesting a campaign
+endpoint.campagneTesten.description: 'Sending a test mail Note: only in the case of a campaign for which there already is content, but which has not yet been sent, is it possible for a test email to be sent.'
+endpoint.campagneTesten.summary: Testing a campaign
+endpoint.campagneVerwijderen.description: This deletes a campaign. Unsent campaigns will be permanently deleted. Campaigns that have been sent are permanently deleted only after 180 days. In the meantime, they can be restored in the overview of campaigns in our program. In response you are shown another campaign object, but now with the state 'deleted'. After having finished this procedure, it is no longer possible for the user to request the campaign.
+endpoint.campagneVerwijderen.summary: Deleting a campaign
+endpoint.campagneVerzenden.description: 'Sends the campaign to all connected lists and segments right away. This call cannot be undone, and it is not blocked when the campaign was already sent: a second call starts delivery again.'
+endpoint.campagneVerzenden.summary: Sending a campaign
+endpoint.campagneWijzigen.description: You only have to submit the fields that require to be modified in the application. Fields that are not mentioned will keep their current value fields keep their current value. As soon as a field is mentioned it does get checked, and thus can cause an error message. This error message displays a code with a message. See above under 'Error messages' what the codes stand for.
+endpoint.campagneWijzigen.summary: Modifying a campaign
+endpoint.campagnegeschiedenisOpvragen.description: The full event history of a campaign. A campaign can contain many events; use pagination to retrieve additional pages.
+endpoint.campagnegeschiedenisOpvragen.summary: Requesting campaign history
+endpoint.campagneresultatenOpvragen.description: The results of a campaign.
+endpoint.campagneresultatenOpvragen.summary: Campaign results
+endpoint.lijstLeegmaken.description: This permanently purges all active subscribers from a list, but doesn't delete the list itself. If the list does not exist, an error message is displayed. In response, you are shown another list object.
+endpoint.lijstLeegmaken.summary: Purging a list
+endpoint.lijstOpvragen.description: All information about a list.
+endpoint.lijstOpvragen.summary: Requesting a list
+endpoint.lijstSynchroniserenBulk.description: 'Adds, updates or unsubscribes multiple subscribers in one request. This endpoint is off by default: an account without access gets a 401 with the message "Not permitted to issue bulk requests (1)". Contact Laposta to have it enabled for your account.'
+endpoint.lijstSynchroniserenBulk.summary: Synchronizing a list (bulk)
+endpoint.lijstToevoegen.description: If there is something wrong with the parameters provided, a code is displayed with an error message. You may use these in combination with the variable 'parameter' to display a message to the user. See above under 'Error messages' what the codes stand for.
+endpoint.lijstToevoegen.summary: Adding a list
+endpoint.lijstVerwijderen.description: This permanently deletes a list. If the list does not exist, an error message is displayed. In response you are shown another list object, but now with the state 'deleted'. After having finished this procedure, it is no longer possible for the user to request the list.
+endpoint.lijstVerwijderen.summary: Deleting a list
+endpoint.lijstWijzigen.description: You will only have to include the fields that need to be modified in the application. Fields that are not mentioned will keep their current value. As soon as a field is mentioned, it is checked and may therefore cause an error message. A code is displayed with this error message. You may use this code in combination with the variable 'parameter' to display a message to the user. See above under 'Error messages' what the codes stand for.
+endpoint.lijstWijzigen.summary: Modifying lists
+endpoint.relatieOpvragen.description: All information about a subscriber in a member object
+endpoint.relatieOpvragen.summary: Requesting a subscriber
+endpoint.relatieToevoegen.description: If there is something wrong with the parameters provided, a code is displayed with an error message. You can use this in combination with the variable 'parameter' to display a message to the user. See above under 'Error messages' what the codes stand for.
+endpoint.relatieToevoegen.summary: Adding a subscriber
+endpoint.relatieVerwijderen.description: This permanently deletes a subscriber. If the subscriber does not exist, an error message is displayed. In response you are shown another list object, but now with the state 'deleted'. After having finished this procedure, it is no longer possible for the user to request the subscriber.
+endpoint.relatieVerwijderen.summary: Deleting a subscriber
+endpoint.relatieWijzigen.description: You only have to include the fields that need to be modified in the request. Fields that are not named will keep their current value. As soon as a field is mentioned it does get checked, and thus can cause an error message. This error message displays a code with a message. See above under 'Error messages' what the codes stand for.
+endpoint.relatieWijzigen.summary: Modifying a subscriber
+endpoint.relatiegeschiedenisOpvragen.description: The full event history of a subscriber, similar to the details shown in the application.
+endpoint.relatiegeschiedenisOpvragen.summary: Subscriber history
+endpoint.segmentOpvragen.description: All information about a segment.
+endpoint.segmentOpvragen.summary: Retrieve segment
+endpoint.segmentToevoegen.description: If there is something wrong with the provided parameters, an error code and message will be displayed. See above under Error Messages for what the codes mean.
+endpoint.segmentToevoegen.summary: Add segment
+endpoint.segmentVerwijderen.description: This permanently deletes a segment. After this, the segment cannot be retrieved again.
+endpoint.segmentVerwijderen.summary: Delete segment
+endpoint.segmentWijzigen.description: You only need to include the fields that need to be changed in the request. Fields that are not mentioned retain their current value. Once a field is mentioned, it is checked and can therefore cause an error message. This error message will include a code and a message. See above under Error Messages for what the codes mean.
+endpoint.segmentWijzigen.summary: Modify segment
+endpoint.veldOpvragen.description: All information about a field.
+endpoint.veldOpvragen.summary: Requesting a field
+endpoint.veldToevoegen.description: If there is something wrong with the parameters provided, a code is displayed with an error message. See above under 'Error messages' what the codes stand for.
+endpoint.veldToevoegen.summary: Adding a field
+endpoint.veldVerwijderen.description: This permanently deletes a field. If the field does not exist, an error message is displayed. In response you are shown another field object, but now with the state 'deleted'. After having finished this procedure, it is no longer possible for the user to request the field.
+endpoint.veldVerwijderen.summary: Deleting a field
+endpoint.veldWijzigen.description: 'You will only have to include the parts that need to be modified. Parts that are not mentioned will keep their current values. As soon as a part is mentioned it does get checked, and thus can cause an error message. This error message contains a code with a message. See above under ''Error messages'' what these codes stand for. Pass options_full as a complete replacement for the option list. The key of each entry determines the operation: You may also pass options_full as an array of {"id", "value"} objects — the same shape as the response. The API will handle both formats.'
+endpoint.veldWijzigen.summary: Modifying fields
+endpoint.webhookOpvragen.description: All information about a webhook
+endpoint.webhookOpvragen.summary: Requesting a webhook
+endpoint.webhookToevoegen.description: If there is something wrong with the parameters provided, a code is displayed with an error message. See above under 'Error messages' what the codes stand for.
+endpoint.webhookToevoegen.summary: Adding a webhook
+endpoint.webhookVerwijderen.description: This permanently deletes a webhook. Potentially outstanding requests from the webhook will still be completed. If the field does not exist, an error message is displayed. In response you are shown another webhook object, but now with the state 'deleted'. After having finished this procedure, it is no longer possible for the user to request the webhook.
+endpoint.webhookVerwijderen.summary: Deleting a webhook
+endpoint.webhookWijzigen.description: If there is something wrong with the parameters provided, a code is displayed with an error message. Fields that are not mentioned will keep their current value fields keep their current value. As soon as a field is mentioned it does get checked, and thus can cause an error message. This error message displays a code with a message. See above under 'Error messages' what the codes stand for. See above under 'Error messages' what the codes stand for.
+endpoint.webhookWijzigen.summary: Modifying a webhook
+extra.CampaignContent: The content of a campaign in html and in plain text.
+extra.Error: Every error has the same shape.
+extra.History: A page of events, together with the pagination, sorting and filters that were applied.
+extra.SyncResult: The result of a synchronisation, split into added, edited, skipped and failed.
+fout.400: The request is not valid. The response contains a `type`, a `message` and usually a `code` plus the `parameter` that caused it. An object that does not exist also falls under this, with code 203.
+fout.401: No valid API key was provided, or this endpoint is not enabled for this account.
+fout.429: Too many requests in one minute. The `Retry-After` header tells you how many seconds to wait.
+info.beschrijving: 'The Laposta API follows REST. All responses, including errors, are JSON. Authenticate with basic auth: your API key is the username and the password stays empty.'
+info.titel: Laposta API
+param.alleRelatiesOpvragen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.alleRelatiesOpvragen.state: 'The status of the requested subscribers: active, unsubscribed or cleaned'
+param.alleSegmentenOpvragen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.alleVeldenOpvragen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.alleWebhooksOpvragen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.campagneAanmaken.from[email]: The email address of the sender (must be a sender address approved within the program)
+param.campagneAanmaken.from[name]: The name of the sender
+param.campagneAanmaken.list_ids: Recipients, array of list_ids and segment_ids if needed
+param.campagneAanmaken.name: A name for this campaign for internal use
+param.campagneAanmaken.reply_to: Email address for receiving replies
+param.campagneAanmaken.stats[ga]: Link Google Analytics (true or false)
+param.campagneAanmaken.stats[mtrack]: Link Mtrack (true or false)
+param.campagneAanmaken.subject: Subject line
+param.campagneAanmaken.type: 'Type of campaign (must be set to: regular)'
+param.campagneContentOpvragen.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.campagneContentVullen.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.campagneContentVullen.css: Missing external css files (listed)
+param.campagneContentVullen.empty_unsubscribe: Empty unsubscribe encountered
+param.campagneContentVullen.flash: Flash was encountered
+param.campagneContentVullen.html: The html for the campaign
+param.campagneContentVullen.images: Missing external images (listed)
+param.campagneContentVullen.import_url: The URL from which the html must be imported
+param.campagneContentVullen.inline_css: Potential inlining of css (true or false)
+param.campagneContentVullen.javascript: JavaScript was encountered
+param.campagneContentVullen.no_unsubscribe: No unsubscribe could be located
+param.campagneInplannen.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.campagneInplannen.delivery_requested: The time and date of sending. Use the regular format or ISO format described above.
+param.campagneOpvragen.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.campagneTesten.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.campagneTesten.email: The email address to which the test should be sent.
+param.campagneVerwijderen.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.campagneVerzenden.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.campagneWijzigen.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.campagneWijzigen.from[email]: The email address of the sender (must be a sender address approved within the program)
+param.campagneWijzigen.from[name]: The name of the sender
+param.campagneWijzigen.list_ids: Recipients, array of list_ids and segment_ids if needed
+param.campagneWijzigen.name: A name for this campaign for internal use
+param.campagneWijzigen.reply_to: Email address for receiving replies
+param.campagneWijzigen.stats[ga]: Link Google Analytics (true or false)
+param.campagneWijzigen.stats[mtrack]: Link Mtrack (true or false)
+param.campagneWijzigen.subject: Subject line
+param.campagnegeschiedenisOpvragen.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.campagnegeschiedenisOpvragen.cursor: Cursor from pagination.next_cursor to request the next page. Do not interpret this value yourself; send it back unchanged.
+param.campagnegeschiedenisOpvragen.event_date_from: Only return events from this date and time, inclusive. Use the regular format or ISO format described above.
+param.campagnegeschiedenisOpvragen.event_date_to: Only return events before this date and time, exclusive. Use the regular format or ISO format described above.
+param.campagnegeschiedenisOpvragen.limit: Maximum number of history items to return. Default is 100, maximum is 1000
+param.campagnegeschiedenisOpvragen.order: 'Sort direction: desc or asc. Default is desc'
+param.campagnegeschiedenisOpvragen.order_by: Field to order by. Currently only event_date is supported
+param.campagneresultatenOpvragen.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.lijstLeegmaken.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.lijstOpvragen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.lijstSynchroniserenBulk.actions: 'An array with at least one of the following options: add, update, or unsubscribe_excluded. These determine whether members may be added, updated and/or unsubscribed (read details below).'
+param.lijstSynchroniserenBulk.custom_fields: A JSON object where the key is the name of the extra field and the value is the value of the extra field.
+param.lijstSynchroniserenBulk.email: The email address of the relation to be changed or added. If the member_id is also specified, then a new email address can be specified here for the existing relation.
+param.lijstSynchroniserenBulk.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.lijstSynchroniserenBulk.member_id: The id of the subscriber, or simply their email address. Both work.
+param.lijstSynchroniserenBulk.members: An array with member objects. A minimum of 1, maximum of 500,000.
+param.lijstSynchroniserenBulk.mode (verouderd): For backwards compatibility you can still pass edit, add or add_and_edit, but this parameter is being phased out. Do not send mode together with actions.
+param.lijstSynchroniserenBulk.source_url: The URL from which the relation was registered.
+param.lijstToevoegen.locked: If a list is locked, it cannot be changed by a user of the application. (true or false)
+param.lijstToevoegen.name: Name given to the list in question
+param.lijstToevoegen.remarks: Potential remarks
+param.lijstToevoegen.subscribe_notification_email: Email address to which a notification will be sent upon a subscription
+param.lijstToevoegen.unsubscribe_notification_email: Email address to which a notification will be sent upon the cancelling of a subscription
+param.lijstVerwijderen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.lijstWijzigen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.lijstWijzigen.locked: If a list is locked, it cannot be changed by a user of the application. (true or false)
+param.lijstWijzigen.name: A name for the list in question
+param.lijstWijzigen.remarks: Potential remarks
+param.lijstWijzigen.subscribe_notification_email: Email address to which a notification will be sent upon a subscription
+param.lijstWijzigen.unsubscribe_notification_email: Email address to which a notification will be sent upon the cancelling of a subscription
+param.relatieOpvragen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.relatieOpvragen.member_id: The id of the subscriber, or simply their email address. Both work.
+param.relatieToevoegen.custom_fields: 'The values of the extra fields. The name (key) of the field is the ''custom_name'' (part of the Field object). This is the same as the ''Variable'' in the application. You pass labels as an array, with square brackets: custom_fields[labels][]=Klant. Without those brackets the call still succeeds but nothing changes, and a label that the list does not have returns error code 203.'
+param.relatieToevoegen.email: The email address of the subscriber to be added
+param.relatieToevoegen.ip: The IP address the sign-up came from. For a form on your site that is the visitor address, not your server address.
+param.relatieToevoegen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.relatieToevoegen.options: 'Additional instructions, with possibilities being: upsert: true to overwrite fields if the email address is already linked to an active contact in this list. Normally, you would receive an error if the email address is already linked to an active contact. Note: If a subscriber is unsubscribed and you perform an upsert with that email address, it will be set to active again. If you want to prevent an unsubscribed subscriber from being reactivated, you can use the suppress_reactivation option. suppress_reactivation: true to prevent an unsubscribed subscriber from being reactivated during an upsert suppress_email_notification: true to prevent a notification email from being sent every time someone logs in via an API ignore_doubleoptin: true to instantly activate subscribers on a double-optin list and ensure that no confirmation email is sent when signing up through the API.'
+param.relatieToevoegen.source_url: The URL from which the subscriber is registered
+param.relatieVerwijderen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.relatieVerwijderen.member_id: The id of the subscriber, or simply their email address. Both work.
+param.relatieWijzigen.custom_fields: 'The values of the extra created fields. You pass labels as an array, with square brackets: custom_fields[labels][]=Klant. Only labels the list already has are accepted; you create new labels in the application or during an import.'
+param.relatieWijzigen.email: The email address of the subscriber that must be modified
+param.relatieWijzigen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.relatieWijzigen.state: 'The new status of the subscriber: active or unsubscribed'
+param.relatiegeschiedenisOpvragen.campaign_id: The id of the campaign. You find it in the response of [Get all campaigns](/campagnes/alle-campagnes-opvragen).
+param.relatiegeschiedenisOpvragen.cursor: Cursor from pagination.next_cursor to request the next page. Do not interpret this value yourself; send it back unchanged.
+param.relatiegeschiedenisOpvragen.event_date_from: Only return events from this date and time, inclusive. Use the regular format or ISO format described above.
+param.relatiegeschiedenisOpvragen.event_date_to: Only return events before this date and time, exclusive. Use the regular format or ISO format described above.
+param.relatiegeschiedenisOpvragen.limit: Maximum number of history items to return. Default is 100, maximum is 1000
+param.relatiegeschiedenisOpvragen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.relatiegeschiedenisOpvragen.member_id: The id of the subscriber, or simply their email address. Both work.
+param.relatiegeschiedenisOpvragen.order: 'Sort direction: desc or asc. Default is desc'
+param.relatiegeschiedenisOpvragen.order_by: Field to order by. Currently only event_date is supported
+param.segmentOpvragen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.segmentOpvragen.segment_id: The id of the segment. You find it in the response of [Get all segments](/segmenten/alle-segmenten-opvragen).
+param.segmentToevoegen.definition: The segment definition as JSON text. Note that a field name that does not exist is accepted and produces a segment that matches nobody.
+param.segmentToevoegen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.segmentToevoegen.name: The name of the segment
+param.segmentVerwijderen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.segmentVerwijderen.segment_id: The id of the segment. You find it in the response of [Get all segments](/segmenten/alle-segmenten-opvragen).
+param.segmentWijzigen.definition: The definition of the segment (string in JSON format)
+param.segmentWijzigen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.segmentWijzigen.name: The name of the segment
+param.segmentWijzigen.segment_id: The id of the segment. You find it in the response of [Get all segments](/segmenten/alle-segmenten-opvragen).
+param.veldOpvragen.field_id: The id of the field. You find it in the response of [Get all fields](/velden/alle-velden-opvragen).
+param.veldOpvragen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.veldToevoegen.datatype: 'The data type: text, numeric, date, select_single or select_multiple'
+param.veldToevoegen.datatype_display: 'Only applicable for select_single: the desired display (select, radio)'
+param.veldToevoegen.defaultvalue: A potential default value
+param.veldToevoegen.in_form: Does this field occur in the subscription form? (boolean)
+param.veldToevoegen.in_list: Is this field visible in Laposta's overview? (boolean)
+param.veldToevoegen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.veldToevoegen.name: A name for this field
+param.veldToevoegen.options: What selection options are available? (mandatory for the data types select_single of select_multiple). The options can be given as an array. In the answer the options are repeated, but there is also an extra field options_full. Also listed are the option IDs, which may eventually be used to change the options later.
+param.veldToevoegen.required: Is this a mandatory field?
+param.veldVerwijderen.field_id: The id of the field. You find it in the response of [Get all fields](/velden/alle-velden-opvragen).
+param.veldVerwijderen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.veldWijzigen.datatype: The data type of this field (text, numeric, date, select_single, select_multiple)
+param.veldWijzigen.datatype_display: 'Only applicable for select_single: the desired display (select, radio)'
+param.veldWijzigen.defaultvalue: The default value (will be used in the absence of this field)
+param.veldWijzigen.in_form: Does this field occur in the subscription form? (boolean)
+param.veldWijzigen.in_list: Is this field visible in Laposta's overview? (boolean)
+param.veldWijzigen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.veldWijzigen.name: A name for this field
+param.veldWijzigen.options_full: 'The full set of options for a select_single or select_multiple field, as a key/value map of id → label. The key controls what happens to each option: Existing numeric ID (e.g. "2") — keeps or modifies the option. Changing the label updates it in-place; the ID stays the same, so existing member data is preserved. Non-numeric key (e.g. "new-0") — adds a new option; a fresh ID is assigned automatically. Omitting an existing ID — deletes that option. Always include every option you want to keep. Must be sent as JSON. Alternative format: instead of a key/value map you may also pass an array of objects in the same shape as the response: [{"id": "1", "value": "Red"}, {"id": "new-0", "value": "Orange"}]. The API will normalise this automatically.'
+param.veldWijzigen.required: Is this a mandatory field?
+param.webhookOpvragen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.webhookOpvragen.webhook_id: The id of the webhook. You find it in the response of [Get all webhooks](/webhooks/alle-webhooks-opvragen).
+param.webhookToevoegen.blocked: Is the accessing of the webhook (temporarily) blocked? (true or false)
+param.webhookToevoegen.event: When will the webhook be requested? (subscribed, modified of deactivated)
+param.webhookToevoegen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.webhookToevoegen.url: The URL to be accessed
+param.webhookVerwijderen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.webhookVerwijderen.webhook_id: The id of the webhook. You find it in the response of [Get all webhooks](/webhooks/alle-webhooks-opvragen).
+param.webhookWijzigen.blocked: Is the accessing of the webhook (temporarily) blocked? (true or false)
+param.webhookWijzigen.event: When will the webhook be requested? (subscribed, modified or deactivated)
+param.webhookWijzigen.list_id: The id of the list. You find it in the response of [Get all lists](/lijsten/alle-lijsten-opvragen), and in the application in the URL of the list.
+param.webhookWijzigen.url: The URL to be accessed
+param.webhookWijzigen.webhook_id: The id of the webhook. You find it in the response of [Get all webhooks](/webhooks/alle-webhooks-opvragen).
+schema.campaign.account_id: The ID of this account
+schema.campaign.campaign_id: The ID of this campaign
+schema.campaign.created: Date and time of creation
+schema.campaign.created_iso: Date and time of creation in ISO format
+schema.campaign.delivery_ended: End of last transmission
+schema.campaign.delivery_ended_iso: End of last transmission in ISO format
+schema.campaign.delivery_requested: When to send
+schema.campaign.delivery_requested_iso: When to send in ISO format
+schema.campaign.delivery_started: Start of last transmission
+schema.campaign.delivery_started_iso: Start of last transmission in ISO format
+schema.campaign.from: Sender (name en email address)
+schema.campaign.list_ids: Linked lists and segments
+schema.campaign.modified: Date and time of last modification made
+schema.campaign.modified_iso: Date and time of last modification in ISO format
+schema.campaign.name: Internal name of campaign
+schema.campaign.previewtext: The preheader shown after the subject line in the inbox.
+schema.campaign.reply_to: Email address for receiving replies
+schema.campaign.screenshot: Screenshots of campaign
+schema.campaign.stats: Linked web statistics
+schema.campaign.subject: Subject line
+schema.campaign.timezone: The account timezone used for datetime fields
+schema.campaign.titel: The campaign object
+schema.campaign.type: 'The type of campaign (currently only possible: regular)'
+schema.campaign.web: URL to web version
+schema.field.autocomplete: The value for the html autocomplete attribute (string)
+schema.field.created: Date and time of creation
+schema.field.created_iso: Date and time of creation in ISO format
+schema.field.custom_name: Name of the field (for use in member API calls)
+schema.field.datatype: The data type of the field in question (text, numeric, date, select_single, select_multiple or labels). The labels type belongs to the Labels field, which comes into being by itself as soon as your list has at least one label; you do not create that field yourself.
+schema.field.datatype_display: 'Only applicable for select_single: the desired display (select, radio)'
+schema.field.defaultvalue: The default value (will be used in the absence of this field)
+schema.field.field_id: The ID of the field in question
+schema.field.in_form: Does this field occur in the subscription form? (true or false)
+schema.field.in_list: Does this field occur while browsing the list? (true or false)
+schema.field.is_email: Whether this is the email field of the list.
+schema.field.list_id: The ID of the list to which the field belongs
+schema.field.modified: Always null. Field modification times are not stored and this field is kept for backwards compatibility.
+schema.field.name: Name of the field (for displaying purposes)
+schema.field.options: An array of the available options (for select_single, select_multiple or labels). For a labels field, these are the labels of this list.
+schema.field.options_full: An array of the available options, including IDs (for select_single, select_multiple or labels).
+schema.field.pos: The position of this field in the list, as a string containing a number.
+schema.field.required: Is this a mandatory field? (true or false)
+schema.field.state: 'The status of the field in question: either active or deleted'
+schema.field.tag: The subscriber variable for usage in campaigns (not modifyable)
+schema.field.timezone: The account timezone used for datetime fields
+schema.field.titel: The field object
+schema.list.account_id: The id of the account this list belongs to.
+schema.list.created: Date and time of creation
+schema.list.created_iso: Date and time of creation in ISO format
+schema.list.list_id: ID of the list in question
+schema.list.locked: If a list is locked, it cannot be changed by a user of the application. (true or false)
+schema.list.members: Information in regards to the number of active, unsubscribed and cleaned (deleted) members
+schema.list.modified: Date and time of last modification made
+schema.list.modified_iso: Date and time of last modification in ISO format
+schema.list.name: Name given to the list in question
+schema.list.remarks: Potential remarks
+schema.list.state: 'Status of the list: active or deleted'
+schema.list.subscribe_notification_email: Email address to which a notification will be sent upon a subscription
+schema.list.timezone: The account timezone used for datetime fields
+schema.list.titel: The list object
+schema.list.unsubscribe_notification_email: Email address to which a notification will be sent upon the cancelling of a subscription
+schema.member.confirm_date: Date and time of confirmation
+schema.member.confirm_date_iso: Date and time of confirmation in ISO format
+schema.member.custom_fields: An array with the value of all additional fields of the corresponding list. If there are fields where several options can be selected, these options are listed in an array. If the list has labels, `labels` is included as well, with the labels of that subscriber as an array.
+schema.member.email: The email address
+schema.member.ip: IP from which the subscriber is registered
+schema.member.list_id: The ID of the related list
+schema.member.member_id: The ID of this member object
+schema.member.modified: Date and time of last modification made
+schema.member.modified_iso: Date and time of last modification in ISO format
+schema.member.signup_date: Date and time of subscription
+schema.member.signup_date_iso: Date and time of subscription in ISO format
+schema.member.source_url: URL from which the subscriber is registered
+schema.member.state: 'The current status of this subscriber: active, unsubscribed, unconfirmed or cleaned'
+schema.member.timezone: The account timezone used for datetime fields
+schema.member.titel: The member object
+schema.report.accepted: The number of emails accepted by the recipient mail servers
+schema.report.accepted_ratio: The ratio of accepted emails to the number of sent emails
+schema.report.account_id: The ID of this account
+schema.report.campaign_id: The ID of the campaign
+schema.report.cleaned: The number of deleted subscribers
+schema.report.clicked: The number of registered clicks
+schema.report.clicked_ratio: The ratio of emails that have been clicked once or more to the number of accepted emails
+schema.report.clicked_unique: The number of subscribers who have clicked on the email once or more
+schema.report.complained: The number of spam complaints (by clicking on the spam button in the email program)
+schema.report.from_automation: Whether this delivery came from an automation.
+schema.report.hardbounced: The number of hard-bounces
+schema.report.opened: The number of registered opens
+schema.report.opened_ratio: The ratio of emails opened once or more to the number of accepted emails
+schema.report.opened_unique: The number of subscribers who have opened the email once or more
+schema.report.sent: The number of emails sent
+schema.report.titel: The report object
+schema.report.unsubscribed: The number of unsubscriptions
+schema.report.webversion: The number of times the web version was viewed
+schema.report.webversion_unique: The number of subscribers who have requested the web version
+schema.segment.created: Time of creation
+schema.segment.created_iso: Time of creation in ISO format
+schema.segment.definition: The definition of the segment (string in JSON format)
+schema.segment.list_id: The ID of the list to which the segment belongs
+schema.segment.modified: Time of last modification
+schema.segment.modified_iso: Time of last modification in ISO format
+schema.segment.name: The name of the segment
+schema.segment.segment_id: The ID of this segment
+schema.segment.state: 'The state of this segment: active or deleted.'
+schema.segment.timezone: The account timezone used for datetime fields
+schema.segment.titel: The segment object
+schema.webhook.blocked: Is the accessing of the webhook (temporarily) blocked? (true or false)
+schema.webhook.created: Date and time of creation
+schema.webhook.created_iso: Date and time of creation in ISO format
+schema.webhook.event: When will the webhook be requested? (subscribed, modified or deactivated)
+schema.webhook.list_id: The ID of the list to which the field belongs
+schema.webhook.modified: Date and time of last modification made
+schema.webhook.modified_iso: Date and time of last modification in ISO format
+schema.webhook.secret: The webhook's signing secret, used to verify that incoming requests are from Laposta (see 'Webhook security' above)
+schema.webhook.state: 'The status of this webhook: active or deleted'
+schema.webhook.timezone: The account timezone used for datetime fields
+schema.webhook.titel: The webhook object
+schema.webhook.url: The URL to be accessed
+schema.webhook.webhook_id: The ID of this webhook
+tag.campagnes.beschrijving: 'Campaigns are the newsletters themselves: create, fill with html, test, schedule and send.'
+tag.campagnes.naam: Campaigns
+tag.lijsten.beschrijving: A list holds the subscribers you send newsletters to. Use these endpoints to create lists, retrieve them and empty them.
+tag.lijsten.naam: Lists
+tag.relaties.beschrijving: 'Subscribers are the people in a list. This is the most used part of the API: adding, updating, unsubscribing and reading history.'
+tag.relaties.naam: Subscribers
+tag.resultaten.beschrijving: 'The results of a sent campaign: how many arrived, were opened and were clicked.'
+tag.resultaten.naam: Results
+tag.segmenten.beschrijving: A segment is a selection within a list, stored as a definition of blocks and rules.
+tag.segmenten.naam: Segments
+tag.velden.beschrijving: Fields define which data you store per subscriber. Every list has an email field, plus the fields you add yourself.
+tag.velden.naam: Fields
+tag.webhooks.beschrijving: A webhook lets Laposta notify your own system as soon as something changes in a list.
+tag.webhooks.naam: Webhooks

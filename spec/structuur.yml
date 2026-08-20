@@ -1,0 +1,1406 @@
+endpoints:
+- id: lijstToevoegen
+  method: post
+  pad: /list
+  tag: lijsten
+  params:
+  - naam: name
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: locked
+    in: form
+    verplicht: false
+    type: boolean
+    groep: Parameters
+  - naam: remarks
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: subscribe_notification_email
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: unsubscribe_notification_email
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  antwoord: ListEnvelope
+  status: 201
+- id: lijstOpvragen
+  method: get
+  pad: /list/{list_id}
+  tag: lijsten
+  params:
+  - naam: list_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: ListEnvelope
+  status: 200
+- id: lijstWijzigen
+  method: post
+  pad: /list/{list_id}
+  tag: lijsten
+  params:
+  - naam: list_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: name
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: locked
+    in: form
+    verplicht: false
+    type: boolean
+    groep: Parameters
+  - naam: remarks
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: subscribe_notification_email
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: unsubscribe_notification_email
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  antwoord: ListEnvelope
+  status: 200
+- id: lijstVerwijderen
+  method: delete
+  pad: /list/{list_id}
+  tag: lijsten
+  params:
+  - naam: list_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: ListEnvelope
+  status: 200
+- id: alleLijstenOpvragen
+  method: get
+  pad: /list
+  tag: lijsten
+  params: []
+  antwoord: ListList
+  status: 200
+- id: lijstLeegmaken
+  method: delete
+  pad: /list/{list_id}/members
+  tag: lijsten
+  params:
+  - naam: list_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: ListEnvelope
+  status: 200
+- id: lijstSynchroniserenBulk
+  method: post
+  pad: /list/{list_id}/members
+  tag: lijsten
+  params:
+  - naam: list_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: actions
+    in: form
+    verplicht: true
+    type: string
+    groep: JSON Object
+  - naam: mode (verouderd)
+    in: form
+    verplicht: false
+    type: string
+    groep: JSON Object
+  - naam: members
+    in: form
+    verplicht: true
+    type: object
+    groep: JSON Object
+  - naam: member_id
+    in: form
+    verplicht: true
+    type: string
+    groep: Member Object
+  - naam: email
+    in: form
+    verplicht: true
+    type: string
+    groep: Member Object
+  - naam: custom_fields
+    in: form
+    verplicht: true
+    type: object
+    groep: Member Object
+  - naam: source_url
+    in: form
+    verplicht: false
+    type: string
+    groep: Member Object
+  antwoord: SyncResult
+  status: 200
+  json_body: true
+  fouten:
+  - '400'
+  - '401'
+  - '429'
+- id: veldToevoegen
+  method: post
+  pad: /field
+  tag: velden
+  params:
+  - naam: list_id
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: name
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: defaultvalue
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: datatype
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+    enum: &id001
+    - text
+    - numeric
+    - date
+    - select_single
+    - select_multiple
+  - naam: datatype_display
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+    enum: &id002
+    - select
+    - radio
+  - naam: options
+    in: form
+    verplicht: false
+    type: array
+    groep: Parameters
+  - naam: required
+    in: form
+    verplicht: true
+    type: boolean
+    groep: Parameters
+  - naam: in_form
+    in: form
+    verplicht: true
+    type: boolean
+    groep: Parameters
+  - naam: in_list
+    in: form
+    verplicht: true
+    type: boolean
+    groep: Parameters
+  antwoord: FieldEnvelope
+  status: 201
+- id: veldOpvragen
+  method: get
+  pad: /field/{field_id}
+  tag: velden
+  params:
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: field_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: FieldEnvelope
+  status: 200
+- id: veldWijzigen
+  method: post
+  pad: /field/{field_id}
+  tag: velden
+  params:
+  - naam: list_id
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: name
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: datatype
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+    enum: *id001
+  - naam: datatype_display
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+    enum: *id002
+  - naam: options_full
+    in: form
+    verplicht: false
+    type: array
+    groep: Parameters
+  - naam: defaultvalue
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: required
+    in: form
+    verplicht: true
+    type: boolean
+    groep: Parameters
+  - naam: in_form
+    in: form
+    verplicht: false
+    type: boolean
+    groep: Parameters
+  - naam: in_list
+    in: form
+    verplicht: false
+    type: boolean
+    groep: Parameters
+  antwoord: FieldEnvelope
+  status: 200
+- id: veldVerwijderen
+  method: delete
+  pad: /field/{field_id}
+  tag: velden
+  params:
+  - naam: field_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: FieldEnvelope
+  status: 200
+- id: alleVeldenOpvragen
+  method: get
+  pad: /field
+  tag: velden
+  params:
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: FieldList
+  status: 200
+- id: segmentToevoegen
+  method: post
+  pad: /segment
+  tag: segmenten
+  params:
+  - naam: list_id
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: name
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: definition
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: SegmentEnvelope
+  status: 201
+- id: segmentOpvragen
+  method: get
+  pad: /segment/{segment_id}
+  tag: segmenten
+  params:
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: segment_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: SegmentEnvelope
+  status: 200
+- id: segmentWijzigen
+  method: post
+  pad: /segment/{segment_id}
+  tag: segmenten
+  params:
+  - naam: list_id
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: segment_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: name
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: definition
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  antwoord: SegmentEnvelope
+  status: 200
+- id: segmentVerwijderen
+  method: delete
+  pad: /segment/{segment_id}
+  tag: segmenten
+  params:
+  - naam: segment_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: SegmentEnvelope
+  status: 200
+- id: alleSegmentenOpvragen
+  method: get
+  pad: /segment
+  tag: segmenten
+  params:
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: SegmentList
+  status: 200
+- id: relatieToevoegen
+  method: post
+  pad: /member
+  tag: relaties
+  params:
+  - naam: list_id
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: ip
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: email
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: source_url
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: custom_fields
+    in: form
+    verplicht: false
+    type: object
+    groep: Parameters
+  - naam: options
+    in: form
+    verplicht: false
+    type: array
+    groep: Parameters
+  antwoord: MemberEnvelope
+  status: 201
+- id: relatieOpvragen
+  method: get
+  pad: /member/{member_id}
+  tag: relaties
+  params:
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: member_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: MemberEnvelope
+  status: 200
+- id: relatiegeschiedenisOpvragen
+  method: get
+  pad: /member/{member_id}/history
+  tag: relaties
+  params:
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: member_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: campaign_id
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: event_date_from
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: event_date_to
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: limit
+    in: query
+    verplicht: false
+    type: integer
+    groep: Parameters
+  - naam: cursor
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: order_by
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: order
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+    enum: &id005
+    - desc
+    - asc
+  antwoord: History
+  status: 200
+- id: relatieWijzigen
+  method: post
+  pad: /member/{member_id}
+  tag: relaties
+  params:
+  - naam: list_id
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: email
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: state
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+    enum: &id003
+    - active
+    - deleted
+  - naam: custom_fields
+    in: form
+    verplicht: false
+    type: object
+    groep: Parameters
+  antwoord: MemberEnvelope
+  status: 200
+- id: relatieVerwijderen
+  method: delete
+  pad: /member/{member_id}
+  tag: relaties
+  params:
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: member_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: MemberEnvelope
+  status: 200
+- id: alleRelatiesOpvragen
+  method: get
+  pad: /member
+  tag: relaties
+  params:
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: state
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+    enum: *id003
+  antwoord: MemberList
+  status: 200
+- id: webhookToevoegen
+  method: post
+  pad: /webhook
+  tag: webhooks
+  params:
+  - naam: list_id
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: event
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+    enum: &id004
+    - subscribed
+    - modified
+    - deactivated
+  - naam: url
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: blocked
+    in: form
+    verplicht: true
+    type: boolean
+    groep: Parameters
+  antwoord: WebhookEnvelope
+  status: 201
+- id: webhookOpvragen
+  method: get
+  pad: /webhook/{webhook_id}
+  tag: webhooks
+  params:
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: webhook_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: WebhookEnvelope
+  status: 200
+- id: webhookWijzigen
+  method: post
+  pad: /webhook/{webhook_id}
+  tag: webhooks
+  params:
+  - naam: list_id
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: webhook_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: event
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+    enum: *id004
+  - naam: url
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: blocked
+    in: form
+    verplicht: false
+    type: boolean
+    groep: Parameters
+  antwoord: WebhookEnvelope
+  status: 200
+- id: webhookVerwijderen
+  method: delete
+  pad: /webhook/{webhook_id}
+  tag: webhooks
+  params:
+  - naam: webhook_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: WebhookEnvelope
+  status: 200
+- id: alleWebhooksOpvragen
+  method: get
+  pad: /webhook
+  tag: webhooks
+  params:
+  - naam: list_id
+    in: query
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: WebhookList
+  status: 200
+- id: campagneAanmaken
+  method: post
+  pad: /campaign
+  tag: campagnes
+  params:
+  - naam: type
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: name
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: subject
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: from[name]
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: from[email]
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: reply_to
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: list_ids
+    in: form
+    verplicht: true
+    type: object
+    groep: Parameters
+  - naam: stats[ga]
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: stats[mtrack]
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  antwoord: CampaignEnvelope
+  status: 201
+- id: campagneOpvragen
+  method: get
+  pad: /campaign/{campaign_id}
+  tag: campagnes
+  params:
+  - naam: campaign_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: CampaignEnvelope
+  status: 200
+- id: campagnegeschiedenisOpvragen
+  method: get
+  pad: /campaign/{campaign_id}/history
+  tag: campagnes
+  params:
+  - naam: campaign_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: event_date_from
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: event_date_to
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: limit
+    in: query
+    verplicht: false
+    type: integer
+    groep: Parameters
+  - naam: cursor
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: order_by
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: order
+    in: query
+    verplicht: false
+    type: string
+    groep: Parameters
+    enum: *id005
+  antwoord: History
+  status: 200
+- id: campagneWijzigen
+  method: post
+  pad: /campaign/{campaign_id}
+  tag: campagnes
+  params:
+  - naam: campaign_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: name
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: subject
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: from[name]
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: from[email]
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: reply_to
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: list_ids
+    in: form
+    verplicht: false
+    type: object
+    groep: Parameters
+  - naam: stats[ga]
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: stats[mtrack]
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  antwoord: CampaignEnvelope
+  status: 200
+- id: campagneVerwijderen
+  method: delete
+  pad: /campaign/{campaign_id}
+  tag: campagnes
+  params:
+  - naam: campaign_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: CampaignEnvelope
+  status: 200
+- id: alleCampagnesOpvragen
+  method: get
+  pad: /campaign
+  tag: campagnes
+  params: []
+  antwoord: CampaignList
+  status: 200
+- id: campagneContentOpvragen
+  method: get
+  pad: /campaign/{campaign_id}/content
+  tag: campagnes
+  params:
+  - naam: campaign_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: CampaignContent
+  status: 200
+- id: campagneContentVullen
+  method: post
+  pad: /campaign/{campaign_id}/content
+  tag: campagnes
+  params:
+  - naam: campaign_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: html
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: import_url
+    in: form
+    verplicht: false
+    type: string
+    groep: Parameters
+  - naam: inline_css
+    in: form
+    verplicht: false
+    type: boolean
+    groep: Parameters
+  - naam: javascript
+    in: form
+    verplicht: false
+    type: string
+    groep: Rapportage resultaat
+  - naam: flash
+    in: form
+    verplicht: false
+    type: string
+    groep: Rapportage resultaat
+  - naam: no_unsubscribe
+    in: form
+    verplicht: false
+    type: string
+    groep: Rapportage resultaat
+  - naam: empty_unsubscribe
+    in: form
+    verplicht: false
+    type: string
+    groep: Rapportage resultaat
+  - naam: css
+    in: form
+    verplicht: false
+    type: string
+    groep: Rapportage resultaat
+  - naam: images
+    in: form
+    verplicht: false
+    type: string
+    groep: Rapportage resultaat
+  antwoord: CampaignContent
+  status: 200
+- id: campagneVerzenden
+  method: post
+  pad: /campaign/{campaign_id}/action/send
+  tag: campagnes
+  params:
+  - naam: campaign_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: CampaignEnvelope
+  status: 200
+- id: campagneInplannen
+  method: post
+  pad: /campaign/{campaign_id}/action/schedule
+  tag: campagnes
+  params:
+  - naam: campaign_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: delivery_requested
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: CampaignEnvelope
+  status: 200
+- id: campagneTesten
+  method: post
+  pad: /campaign/{campaign_id}/action/testmail
+  tag: campagnes
+  params:
+  - naam: campaign_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  - naam: email
+    in: form
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: CampaignEnvelope
+  status: 200
+- id: campagneresultatenOpvragen
+  method: get
+  pad: /report/{campaign_id}
+  tag: resultaten
+  params:
+  - naam: campaign_id
+    in: path
+    verplicht: true
+    type: string
+    groep: Parameters
+  antwoord: ReportEnvelope
+  status: 200
+- id: alleResultatenOpvragen
+  method: get
+  pad: /report
+  tag: resultaten
+  params: []
+  antwoord: ReportList
+  status: 200
+schemas:
+  list:
+    velden:
+    - naam: list_id
+      type: string
+      nullable: false
+      voorbeeld: BaImMu3JZA
+    - naam: timezone
+      type: string
+      nullable: false
+      voorbeeld: Europe/Amsterdam
+    - naam: created
+      type: string
+      nullable: false
+    - naam: created_iso
+      type: string
+      nullable: true
+    - naam: modified
+      type: string
+      nullable: true
+    - naam: modified_iso
+      type: string
+      nullable: true
+    - naam: state
+      type: string
+      nullable: false
+      enum: *id003
+    - naam: name
+      type: string
+      nullable: false
+      voorbeeld: Nieuwsbrief
+    - naam: locked
+      type: boolean
+      nullable: false
+    - naam: remarks
+      type: string
+      nullable: false
+    - naam: subscribe_notification_email
+      type: string
+      nullable: false
+    - naam: unsubscribe_notification_email
+      type: string
+      nullable: false
+    - naam: members
+      type: object
+      nullable: false
+    - naam: account_id
+      type: string
+      nullable: false
+      voorbeeld: wFiUS4HL4e
+  field:
+    velden:
+    - naam: field_id
+      type: string
+      nullable: false
+      voorbeeld: Z87ysHha9A
+    - naam: list_id
+      type: string
+      nullable: false
+      voorbeeld: BaImMu3JZA
+    - naam: timezone
+      type: string
+      nullable: false
+      voorbeeld: Europe/Amsterdam
+    - naam: created
+      type: string
+      nullable: false
+    - naam: created_iso
+      type: string
+      nullable: true
+    - naam: modified
+      type: string
+      nullable: true
+    - naam: state
+      type: string
+      nullable: false
+      enum: *id003
+    - naam: name
+      type: string
+      nullable: false
+      voorbeeld: Nieuwsbrief
+    - naam: tag
+      type: string
+      nullable: false
+    - naam: custom_name
+      type: string
+      nullable: false
+    - naam: defaultvalue
+      type: string
+      nullable: false
+    - naam: datatype
+      type: string
+      nullable: false
+      enum:
+      - text
+      - numeric
+      - date
+      - select_single
+      - select_multiple
+      - labels
+    - naam: datatype_display
+      type: string
+      nullable: false
+      enum: *id002
+    - naam: options
+      type: array
+      nullable: false
+    - naam: options_full
+      type: array
+      nullable: false
+    - naam: required
+      type: boolean
+      nullable: false
+    - naam: in_form
+      type: boolean
+      nullable: false
+    - naam: in_list
+      type: boolean
+      nullable: false
+    - naam: autocomplete
+      type: string
+      nullable: false
+    - naam: pos
+      type: string
+      nullable: false
+    - naam: is_email
+      type: boolean
+      nullable: false
+  segment:
+    velden:
+    - naam: segment_id
+      type: string
+      nullable: false
+      voorbeeld: pDrp5KOD0z
+    - naam: list_id
+      type: string
+      nullable: false
+      voorbeeld: BaImMu3JZA
+    - naam: timezone
+      type: string
+      nullable: false
+      voorbeeld: Europe/Amsterdam
+    - naam: name
+      type: string
+      nullable: false
+      voorbeeld: Nieuwsbrief
+    - naam: definition
+      type: string
+      nullable: false
+    - naam: created
+      type: string
+      nullable: false
+    - naam: created_iso
+      type: string
+      nullable: true
+    - naam: modified
+      type: string
+      nullable: true
+    - naam: modified_iso
+      type: string
+      nullable: true
+    - naam: state
+      type: string
+      nullable: false
+      enum: *id003
+  member:
+    velden:
+    - naam: member_id
+      type: string
+      nullable: false
+      voorbeeld: ZKfjhLJHfl
+    - naam: list_id
+      type: string
+      nullable: false
+      voorbeeld: BaImMu3JZA
+    - naam: email
+      type: string
+      nullable: false
+      voorbeeld: relatie@example.net
+    - naam: state
+      type: string
+      nullable: false
+      enum: *id003
+    - naam: timezone
+      type: string
+      nullable: false
+      voorbeeld: Europe/Amsterdam
+    - naam: signup_date
+      type: string
+      nullable: false
+    - naam: signup_date_iso
+      type: string
+      nullable: true
+    - naam: modified
+      type: string
+      nullable: true
+    - naam: modified_iso
+      type: string
+      nullable: true
+    - naam: confirm_date
+      type: string
+      nullable: true
+    - naam: confirm_date_iso
+      type: string
+      nullable: true
+    - naam: ip
+      type: string
+      nullable: false
+    - naam: source_url
+      type: string
+      nullable: false
+    - naam: custom_fields
+      type: object
+      nullable: false
+  webhook:
+    velden:
+    - naam: webhook_id
+      type: string
+      nullable: false
+      voorbeeld: k5RaJhbnLa
+    - naam: list_id
+      type: string
+      nullable: false
+      voorbeeld: BaImMu3JZA
+    - naam: timezone
+      type: string
+      nullable: false
+      voorbeeld: Europe/Amsterdam
+    - naam: created
+      type: string
+      nullable: false
+    - naam: created_iso
+      type: string
+      nullable: true
+    - naam: modified
+      type: string
+      nullable: true
+    - naam: modified_iso
+      type: string
+      nullable: true
+    - naam: state
+      type: string
+      nullable: false
+      enum: *id003
+    - naam: event
+      type: string
+      nullable: false
+      enum: *id004
+    - naam: url
+      type: string
+      nullable: false
+    - naam: blocked
+      type: boolean
+      nullable: false
+    - naam: secret
+      type: string
+      nullable: false
+  campaign:
+    velden:
+    - naam: account_id
+      type: string
+      nullable: false
+      voorbeeld: wFiUS4HL4e
+    - naam: campaign_id
+      type: string
+      nullable: false
+      voorbeeld: njhgaf61ye
+    - naam: timezone
+      type: string
+      nullable: false
+      voorbeeld: Europe/Amsterdam
+    - naam: created
+      type: string
+      nullable: false
+    - naam: created_iso
+      type: string
+      nullable: true
+    - naam: modified
+      type: string
+      nullable: true
+    - naam: modified_iso
+      type: string
+      nullable: true
+    - naam: type
+      type: string
+      nullable: false
+    - naam: delivery_requested
+      type: string
+      nullable: true
+    - naam: delivery_requested_iso
+      type: string
+      nullable: true
+    - naam: delivery_started
+      type: string
+      nullable: true
+    - naam: delivery_started_iso
+      type: string
+      nullable: true
+    - naam: delivery_ended
+      type: string
+      nullable: true
+    - naam: delivery_ended_iso
+      type: string
+      nullable: true
+    - naam: name
+      type: string
+      nullable: false
+      voorbeeld: Nieuwsbrief
+    - naam: subject
+      type: string
+      nullable: false
+    - naam: from
+      type: object
+      nullable: false
+    - naam: reply_to
+      type: string
+      nullable: false
+    - naam: list_ids
+      type: object
+      nullable: false
+    - naam: stats
+      type: object
+      nullable: false
+    - naam: web
+      type: string
+      nullable: false
+    - naam: screenshot
+      type: object
+      nullable: false
+    - naam: previewtext
+      type: string
+      nullable: false
+  report:
+    velden:
+    - naam: account_id
+      type: string
+      nullable: false
+      voorbeeld: wFiUS4HL4e
+    - naam: campaign_id
+      type: string
+      nullable: false
+      voorbeeld: njhgaf61ye
+    - naam: sent
+      type: integer
+      nullable: false
+    - naam: accepted
+      type: integer
+      nullable: false
+    - naam: cleaned
+      type: integer
+      nullable: false
+    - naam: complained
+      type: integer
+      nullable: false
+    - naam: hardbounced
+      type: integer
+      nullable: false
+    - naam: unsubscribed
+      type: integer
+      nullable: false
+    - naam: opened_unique
+      type: integer
+      nullable: false
+    - naam: clicked_unique
+      type: integer
+      nullable: false
+    - naam: webversion_unique
+      type: integer
+      nullable: false
+    - naam: accepted_ratio
+      type: number
+      nullable: false
+    - naam: opened_ratio
+      type: number
+      nullable: false
+    - naam: clicked_ratio
+      type: number
+      nullable: false
+    - naam: from_automation
+      type: boolean
+      nullable: false
+tags:
+- lijsten
+- velden
+- segmenten
+- relaties
+- webhooks
+- campagnes
+- resultaten
